@@ -3,18 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FitScreenSize_Sprite : MonoBehaviour
+public class AdaptToCamera_SpriteRenderer : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
-
+    private Sprite currentSprite;
 
     public void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        FitScreenSize();
+        AdaptToCamera();
     }
 
-    public void FitScreenSize()
+    public void AdaptToCamera()
     {
         Camera camera = Camera.main;
         float screenY = camera.orthographicSize * 2f;
@@ -30,4 +30,20 @@ public class FitScreenSize_Sprite : MonoBehaviour
 
         transform.localScale = new Vector3(uniformScale, uniformScale, 1f);
     }
+    private void Awake()
+    {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        currentSprite = spriteRenderer.sprite;
+    }
+
+    private void Update()
+    {
+        // 检测当前图片是否发生变化
+        if (spriteRenderer.sprite != currentSprite)
+        {
+            currentSprite = spriteRenderer.sprite;
+            AdaptToCamera();
+        }
+    }
+
 }
