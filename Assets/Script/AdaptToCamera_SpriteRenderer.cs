@@ -8,12 +8,6 @@ public class AdaptToCamera_SpriteRenderer : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private Sprite currentSprite;
 
-    public void Start()
-    {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        AdaptToCamera();
-    }
-
     public void AdaptToCamera()
     {
         Camera camera = Camera.main;
