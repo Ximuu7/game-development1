@@ -1,0 +1,46 @@
+[
+   {
+    "dialog_ID": 0,
+    "dialog_type": "#",
+    "name": "a",
+    "dialog": "a1",
+    "dialog_position": "down",
+    "image_name": "a1",
+    "image_position": "left",
+    "dialog_next": 1,
+    "command": ""
+  },
+   {
+    "dialog_ID": 1,
+    "dialog_type": "&",
+    "name": "b",
+    "dialog": "b1",
+    "dialog_position": "down",
+    "image_name": "b1",
+    "image_position": "right",
+    "dialog_next": 3,
+    "command": ""
+  },
+   {
+    "dialog_ID": 2,
+    "dialog_type": "&",
+    "name": "b",
+    "dialog": "b2",
+    "dialog_position": "down",
+    "image_name": "b1",
+    "image_position": "right",
+    "dialog_next": 3,
+    "command": ""
+  },
+   {
+    "dialog_ID": 3,
+    "dialog_type": "#",
+    "name": "a",
+    "dialog": "a2",
+    "dialog_position": "down",
+    "image_name": "a2",
+    "image_position": "middle",
+    "dialog_next": 0,
+    "command": ""
+  }
+]
