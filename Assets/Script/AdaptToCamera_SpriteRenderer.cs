@@ -20,7 +20,7 @@ public class AdaptToCamera_SpriteRenderer : MonoBehaviour
         float scaleX = screenX / spriteX;
         float scaleY = screenY / spriteY;
 
-        float uniformScale = Mathf.Min(scaleX, scaleY);
+        float uniformScale =0.8f*Mathf.Min(scaleX, scaleY);
 
         transform.localScale = new Vector3(uniformScale, uniformScale, 1f);
     }

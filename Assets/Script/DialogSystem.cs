@@ -27,17 +27,21 @@ public class DialogSystem : MonoBehaviour
 
     public TMP_Text dialogtext;
 
-    public List<Dialogrows> dialogrow=new List<Dialogrows>();
+    public List<Dialogrows> dialogrows=new List<Dialogrows>();
+
+    public List<TMP_Text> dialog_positions=new List<TMP_Text>();
+
+    public List<SpriteRenderer> SpriteRenderers = new List<SpriteRenderer>();
 
     public void ReadDialog(string str)
     {
         jsonfile = Resources.Load<TextAsset>(str);
-        dialogrow= JsonConvert.DeserializeObject<List<Dialogrows>>(jsonfile.text);
+        dialogrows= JsonConvert.DeserializeObject<List<Dialogrows>>(jsonfile.text);
     }
 
-    public void ShowText(string text,string text_position)
+    public void ShowDialog(string dialog,string dialog_position)
     {
-
+        
     }
 
     public void ShowImage(string image_name,string image_position)
@@ -50,15 +54,21 @@ public class DialogSystem : MonoBehaviour
 
     }
 
-    public void ShowDialog()
+    public void Show()
     {
 
     }
 
-    public void Awake()
+    public void CloseDialogWindow(string dialogwindow)
+    {
+
+    }
+    private void Awake()
     {
         ReadDialog("storyline");
 
     }
+
+
 
 }
