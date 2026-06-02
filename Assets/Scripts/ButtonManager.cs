@@ -55,6 +55,10 @@ public class ButtonManager_Settings : MonoBehaviour
             canvas_main.SetActive(true);
         }
     }//隐藏文本框和UI
+    public void CountDown() 
+    {      
+        
+    }//显示倒计时条
 
     private void OpenStart()
     {
