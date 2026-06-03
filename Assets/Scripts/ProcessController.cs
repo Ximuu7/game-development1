@@ -4,13 +4,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class ProcessController : MonoBehaviour
 {
-    public int process_ID;
+    public int processID;
     public TextAsset jsonfile;
+    public Canvas canvas_main;
+    public Button button_continue;
 
     [System.Serializable]
     public class Dialogrows
@@ -35,6 +38,7 @@ public class ProcessController : MonoBehaviour
     public List<SpriteRenderer> spriterenderers = new List<SpriteRenderer>();  // 用于显示图像的SpriteRenderer组件
     public List<AudioClip> audioclips = new List<AudioClip>();// 音频
     public List<AnimationClip> animationclips = new List<AnimationClip>();// 动画
+
     public Button option; // 选项按钮预制体
     public Transform optiongroup; // 选项按钮的父物体
     public string command_type;
@@ -58,33 +62,35 @@ public class ProcessController : MonoBehaviour
 
     }//显示对应图像
 
-    public void ShowDialog(int program_ID)
+    public void ShowDialog(int process_ID)
     {
-        if(dialogrows[program_ID].dialog!="")
-            ShowText(dialogrows[program_ID].dialog);
-        if (dialogrows[program_ID].image_name != "")
-            ShowImage(dialogrows[program_ID].image_name, dialogrows[program_ID].image_position);
+        if(dialogrows[process_ID].dialog!="")
+            ShowText(dialogrows[process_ID].dialog);
+        if (dialogrows[process_ID].image_name != "")
+            ShowImage(dialogrows[process_ID].image_name, dialogrows[process_ID].image_position);
     }//显示“对话”
 
-    public void ShowOptions(int program_ID)
+    public void ShowOptions(int process_ID)
     {
-        GameObject button = Instantiate(option.gameObject, optiongroup);
-        Debug.Log("generated option");
-        button.GetComponentInChildren<TMP_Text>().text = dialogrows[program_ID].dialog;
-
-        button.GetComponent<Button>().onClick.AddListener
-        (delegate
+        if (dialogrows[process_ID].process_type == "&")
         {
-            OnOptionClick(dialogrows[program_ID].process_next);
-        });
-        ShowOptions(program_ID + 1);
+            GameObject button = Instantiate(option.gameObject, optiongroup);
+            Debug.Log("generated option");
+            button.GetComponentInChildren<TMP_Text>().text = dialogrows[process_ID].dialog;
 
-    }
+            button.GetComponent<Button>().onClick.AddListener
+            (delegate
+            {
+                OnOptionClick(dialogrows[process_ID].process_next);
+            });
+            ShowOptions(process_ID + 1);
+        }
+    }//显示选项
 
     public void ShowBackground(string image_background)
     {
 
-    }
+    }//显示背景
 
     public void ReadCommand(string command)
     {
@@ -134,48 +140,58 @@ public class ProcessController : MonoBehaviour
 
     }//读取命令
 
-    public void Processor(int program_ID)
+    public void Processor(int process_ID)
     {
-        string program_type = dialogrows[program_ID].process_type;
-        ReadCommand(dialogrows[program_ID].command);
-        if (program_type=="#") //只播放音乐、动画，无对话
+        Debug.Log("Processing ID: " + process_ID);
+        string process_type = dialogrows[process_ID].process_type;
+        ReadCommand(dialogrows[process_ID].command);
+        if (process_type=="#") //只播放音乐、动画，无对话
         {
-
+            
+            processID = dialogrows[process_ID].process_next;
         }
-        else if(program_type=="&")//选择
+        else if(process_type=="&")//选择
         {
-            ShowOptions(program_ID);
+            button_continue.gameObject.SetActive(false);
+            ShowOptions(process_ID);
         }
-        else if(program_type=="@")//对话
+        else if(process_type=="@")//对话
         {
-            ShowDialog(program_ID);
+            ShowDialog(process_ID);
+            processID = dialogrows[process_ID].process_next;
         }
+        
     }
 
     public void ButtonContinueClick()
     {
-        Processor(process_ID);
-    }//继续按钮（隐藏）
+        Processor(processID);
+    }//继续（隐藏按钮）
+
     public void OnOptionClick(int index)
     {
-        process_ID = index;
-        Processor(process_ID);
+        processID = index;
+        Processor(processID);
         for (int i = 0; i < optiongroup.childCount; i++)
         {
             Destroy(optiongroup.GetChild(i).gameObject);
+            Debug.Log("Destroyed option button");
         }
+        button_continue.gameObject.SetActive(true);
     }//点击选项按钮
  
 
     private void Awake()
     {
         ReadDialog("storyline");
-
+        Debug.Log("Awake finished");
+        Dic_Name_Image["a2"]= sprite_roles[0];
     }
 
 
     private void Start()
     {
-        process_ID = 0;
+        processID = 0;
     }
+
 }

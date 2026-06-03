@@ -4,7 +4,7 @@ using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ButtonManager_Settings : MonoBehaviour
+public class ButtonManager : MonoBehaviour
 {
 
     public List<Button> buttons_start;
@@ -114,6 +114,7 @@ public class ButtonManager_Settings : MonoBehaviour
     {
         Application.Quit();
     }//退出游戏
+    
 
     public void ChangeButtonPositionInSettings()
     {

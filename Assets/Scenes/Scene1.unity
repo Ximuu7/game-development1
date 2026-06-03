@@ -1243,7 +1243,7 @@ GameObject:
   - component: {fileID: 477498010}
   - component: {fileID: 477498011}
   m_Layer: 0
-  m_Name: ProgramController
+  m_Name: ProcessController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1276,17 +1276,38 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd36164f7533c5e4fb9c3dc189ccdf54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  process_ID: 0
-  jsonfile: {fileID: 4900000, guid: 06a84cb7335d0a44a9127b47fc5afa56, type: 3}
+  processID: 0
+  jsonfile: {fileID: 4900000, guid: 85683906125714348a5899e21c508bff, type: 3}
+  canvas_main: {fileID: 0}
+  button_continue: {fileID: 1377996252}
   dialogtext: {fileID: 811701834}
   dialogrows: []
-  sprite_roles: []
-  sprites_backgrounds: []
-  spriterenderers: []
+  sprite_roles:
+  - {fileID: 21300000, guid: cf238fecb84ee9b49b4699f1a698e293, type: 3}
+  - {fileID: 21300000, guid: c033d852945e92f449c84c01925e2bc0, type: 3}
+  - {fileID: 21300000, guid: 1f59fb87ef0519d4b81a1473315d561b, type: 3}
+  - {fileID: 21300000, guid: e4d2c85f38fca9d40be2815f552f2ba0, type: 3}
+  - {fileID: 21300000, guid: 92ac61f7caecdde468b3403876310be4, type: 3}
+  - {fileID: 21300000, guid: c0421b4065363a74a8ea71100cdee467, type: 3}
+  - {fileID: 21300000, guid: 437de85b6cd09f541aeb130ab2939ef1, type: 3}
+  - {fileID: 21300000, guid: 2bd30bf263a7bcb418ea9fd0f937019c, type: 3}
+  - {fileID: 21300000, guid: 2bd30bf263a7bcb418ea9fd0f937019c, type: 3}
+  - {fileID: 21300000, guid: c3094a0eff08c194aae9c265a4e6a8bd, type: 3}
+  - {fileID: 21300000, guid: 3716f830840eda6439fce8d04c7594ba, type: 3}
+  - {fileID: 21300000, guid: e052869925996514fb14645444029f2b, type: 3}
+  - {fileID: 21300000, guid: 907168a4cf10c614dbac97d28d871cd5, type: 3}
+  sprites_backgrounds:
+  - {fileID: 21300000, guid: 32d2f651b42017241b6dcb576cec1895, type: 3}
+  - {fileID: 21300000, guid: a78953fa44f7d454d849143f829cbbde, type: 3}
+  - {fileID: 21300000, guid: 4e9cb6923920e594db20bf2f4d377a25, type: 3}
+  spriterenderers:
+  - {fileID: 1936178313}
+  - {fileID: 325144429}
+  - {fileID: 2105534446}
   audioclips: []
   animationclips: []
-  option: {fileID: 0}
-  optiongroup: {fileID: 0}
+  option: {fileID: 4086376961042728140, guid: 2d939b8e3914fc6439c1278af832aa96, type: 3}
+  optiongroup: {fileID: 1143610800}
   command_type: 
   command_content: 
 --- !u!1 &484222216
@@ -2186,6 +2207,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 477498011}
+        m_TargetAssemblyTypeName: ProcessController, Assembly-CSharp
+        m_MethodName: Processor
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &866110942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2742,7 +2775,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 960, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1143610801
 MonoBehaviour:
@@ -2764,8 +2797,8 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 100, y: 100}
-  m_Spacing: {x: 0, y: 0}
+  m_CellSize: {x: 960, y: 100}
+  m_Spacing: {x: 0, y: 60}
   m_Constraint: 0
   m_ConstraintCount: 2
 --- !u!1 &1164768607
@@ -3254,7 +3287,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1377996253}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 477498011}
+        m_TargetAssemblyTypeName: ProcessController, Assembly-CSharp
+        m_MethodName: ButtonContinueClick
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1377996253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3268,7 +3313,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.78400004, g: 0.78400004, b: 0.78400004, a: 0.3254902}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.3254902}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

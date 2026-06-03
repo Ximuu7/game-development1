@@ -1,42 +1,52 @@
 [
   {
-    "program_ID": 0,
-    "program_type": "#",
-    "dialog": "a1",
-    "image_name": "a1",
+    "process_ID": 0,
+    "process_type": "#",
+    "dialog": "",
+    "image_name": "",
+    "image_size": 1,
+    "image_position": 1,
+    "command": "sound=bgm1, ani=ani1,background=bg1",
+    "process_next": 1
+  },
+  {
+    "process_ID": 1,
+    "process_type": "&",
+    "dialog": "zsasda11111111111111",
+    "image_name": "b1",
+    "image_size": 1,
+    "image_position": 1,
+    "command": "sound=bgm2",
+    "process_next": 3
+  },
+  {
+    "process_ID": 2,
+    "process_type": "&",
+    "dialog": "qqqqqqqqqqqqqqqqqqq",
+    "image_name": "b1",
     "image_size": 1,
     "image_position": 1,
     "command": "",
-    "program_next": 1
+    "process_next": 3
   },
   {
-    "program_ID": 1,
-    "program_type": "&",
-    "dialog": "b1",
-    "image_name": "b1",
-    "image_size": 1,
-    "image_position": 3,
-    "command": "",
-    "program_next": 2
-  },
-  {
-    "program_ID": 2,
-    "program_type": "&",
-    "dialog": "b2",
-    "image_name": "b1",
-    "image_size": 1,
-    "image_position": 3,
-    "command": "",
-    "program_next": 3
-  },
-  {
-    "program_ID": 3,
-    "program_type": "#",
+    "process_ID": 3,
+    "process_type": "@",
     "dialog": "a2",
     "image_name": "a2",
     "image_size": 1,
-    "image_position": 2,
+    "image_position": 1,
     "command": "",
-    "program_next": 0.0
+    "process_next": 4
+  },
+  {
+    "process_ID": 4,
+    "process_type": "",
+    "dialog": "",
+    "image_name": "",
+    "image_size": 1,
+    "image_position": 1,
+    "command": "",
+    "process_next": 4
   }
 ]
