@@ -1,52 +1,72 @@
 [
   {
     "process_ID": 0,
-    "process_type": "#",
+    "process_type": "a",
     "dialog": "",
     "image_name": "",
     "image_size": 1,
     "image_position": 1,
-    "command": "sound=bgm1, ani=ani1,background=bg1",
+    "command": "audio=bgm1, background=dormitory",
     "process_next": 1
   },
   {
     "process_ID": 1,
-    "process_type": "&",
-    "dialog": "zsasda11111111111111",
-    "image_name": "b1",
-    "image_size": 1,
+    "process_type": "b",
+    "dialog": "啊？",
+    "image_name": "father",
+    "image_size": 0.8,
     "image_position": 1,
-    "command": "sound=bgm2",
+    "command": "audio=click1,background=desk",
     "process_next": 3
   },
   {
     "process_ID": 2,
-    "process_type": "&",
-    "dialog": "qqqqqqqqqqqqqqqqqqq",
-    "image_name": "b1",
-    "image_size": 1,
-    "image_position": 1,
+    "process_type": "b",
+    "dialog": "好的",
+    "image_name": "mother",
+    "image_size": 1.2,
+    "image_position": 2,
     "command": "",
     "process_next": 3
   },
   {
     "process_ID": 3,
-    "process_type": "@",
-    "dialog": "a2",
-    "image_name": "a2",
-    "image_size": 1,
-    "image_position": 1,
-    "command": "",
+    "process_type": "c",
+    "dialog": "qaq",
+    "image_name": "classmates",
+    "image_size": 0.6,
+    "image_position": 0,
+    "command": "audio=bgm1",
     "process_next": 4
   },
   {
     "process_ID": 4,
-    "process_type": "",
-    "dialog": "",
-    "image_name": "",
+    "process_type": "c",
+    "dialog": "orz",
+    "image_name": "classmate1",
     "image_size": 1,
     "image_position": 1,
     "command": "",
+    "process_next": 5
+  },
+  {
+    "process_ID": 5,
+    "process_type": "c",
+    "dialog": "唉唉唉",
+    "image_name": "classmate1",
+    "image_size": 0.7,
+    "image_position": 2,
+    "command": "clearimage=1,clearimage=0,continue",
+    "process_next": 6
+  },
+  {
+    "process_ID": 6,
+    "process_type": "c",
+    "dialog": "哈哈哈",
+    "image_name": "father",
+    "image_size": 1,
+    "image_position": 1,
+    "command": "clearimage=2,",
     "process_next": 4
   }
 ]
