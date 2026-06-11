@@ -1,21 +1,31 @@
-﻿using System.Collections;
+﻿using JetBrains.Annotations;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Interaction_test:Interaction
+public class Interaction_LimitedTimeToChoose : Interaction
 {
     public GameObject countdownbar;
     public GameObject canvas_main;
     private Button[] buttons;
+    private GameObject obj;
+    
     public override IEnumerator Interactions()
     {
-        GameObject obj = Instantiate(countdownbar, canvas_main.transform);
-        yield return new WaitUntil(()=>obj==null);
+        obj = Instantiate(countdownbar, canvas_main.transform);
         Transform parent = GameObject.Find("Options").transform;
         buttons = parent.GetComponentsInChildren<Button>(false);
+        for (int i = 0;i < buttons.Length;i++)
+            buttons[i].onClick.AddListener(DestroyBar);
+        yield return new WaitUntil(() =>obj == null);
         ClickButtonWithEffect(0);
+    }
+
+    private void DestroyBar()
+    {
+        Destroy(obj);
     }
 
     public void ClickButtonWithEffect(int buttonIndex)

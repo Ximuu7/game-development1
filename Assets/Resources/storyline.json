@@ -16,7 +16,7 @@
     "image_name": "father",
     "image_size": 0.8,
     "image_position": 1,
-    "command": "background=desk,interaction=Interaction_test",
+    "command": "background=desk,interaction=Interaction_LimitedTimeToChoose",
     "process_next": 3
   },
   {

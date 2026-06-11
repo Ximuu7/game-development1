@@ -295,7 +295,7 @@ public class ProcessController : MonoBehaviour
         Dic_Name_Audio["bgm1"] = audiosources[1];
         #endregion
         #region 初始化交互
-        Dic_Name_Interaction["Interaction_test"]= interactions[0];
+        Dic_Name_Interaction["Interaction_LimitedTimeToChoose"] = interactions[0];
         #endregion
         Debug.Log("Awake finished");
     }
