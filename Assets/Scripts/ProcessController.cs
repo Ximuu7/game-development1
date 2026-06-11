@@ -31,25 +31,29 @@ public class ProcessController : MonoBehaviour
 
     public Dictionary<string,Sprite> Dic_Name_Image = new Dictionary<string,Sprite>();
     public Dictionary<string,Sprite> Dic_Name_Background = new Dictionary<string,Sprite>();
-    public Dictionary<string,AudioClip> Dic_Name_Audio = new Dictionary<string, AudioClip>();
+    public Dictionary<string,AudioSource> Dic_Name_Audio = new Dictionary<string, AudioSource>();
     public Dictionary<string,AnimationClip> Dic_Name_Animation = new Dictionary<string, AnimationClip>();
+    public Dictionary<string,Interaction> Dic_Name_Interaction = new Dictionary<string,Interaction>();
 
     public TMP_Text dialogtext;
     public List<Dialogrows> dialogrows=new List<Dialogrows>();
-
     public List<Sprite> sprite_roles;//角色图像
+    public List<GameObject> gameobjects=new List<GameObject>();
     public List<Sprite> sprite_backgrounds;//背景图像
     public List<SpriteRenderer> spriterenderers = new List<SpriteRenderer>();  // 用于显示图像的SpriteRenderer组件
-    public List<AudioClip> audioclips = new List<AudioClip>();// 音频
+    public List<AudioSource> audiosources = new List<AudioSource>();// 音频
     public List<AnimationClip> animationclips = new List<AnimationClip>();// 动画
+    public List <Interaction> interactions = new List<Interaction>();
+
 
     public Button option; // 选项按钮预制体
     public Transform optiongroup; // 选项按钮的父物体
     public string command_type;
     public string command_content;
     public Image background;
+    public GameObject roles;
 
-
+    
     public void ReadDialog(string str)
     {
         jsonfile = Resources.Load<TextAsset>(str);
@@ -75,7 +79,27 @@ public class ProcessController : MonoBehaviour
         spriterenderers[image_position].transform.localScale = new Vector3(uniformScale, uniformScale, 1f);
 
     }//显示图像
-    
+    public void ShowImage(string image_name,float image_positionX,float image_positionY,float image_size)
+    {
+        Sprite sprite = Dic_Name_Image[image_name];
+        GameObject obj=new GameObject(sprite.name);
+        gameobjects.Add(obj);
+        obj.transform.SetParent(roles.transform);
+        obj.transform.position=new Vector3(image_positionX,image_positionY,100);
+        SpriteRenderer spriterenderer=obj.AddComponent<SpriteRenderer>();
+        spriterenderer.sprite = sprite;
+        Camera camera = Camera.main;
+        float screenY = camera.orthographicSize * 2f;
+        float screenX = screenY * camera.aspect;
+        float spriteY = spriterenderer.sprite.bounds.size.y;
+        float spriteX = spriterenderer.sprite.bounds.size.x;
+        float scaleX = screenX / spriteX;
+        float scaleY = screenY / spriteY;
+        float uniformScale = image_size * Mathf.Min(scaleX, scaleY);
+
+        spriterenderer.transform.localScale = new Vector3(uniformScale, uniformScale, 1f);
+
+    }//用坐标显示图像
     public void ShowDialog(int process_ID)
     {
         if(dialogrows[process_ID].dialog!="")
@@ -110,29 +134,50 @@ public class ProcessController : MonoBehaviour
     }//显示动画
     public void PlayAudio(string audio_name)
     {
-        AudioClip clip = Dic_Name_Audio[audio_name];
-        if (clip != null)
+        AudioSource source = Dic_Name_Audio[audio_name];
+        if (source != null)
         {
-            AudioSource.PlayClipAtPoint(clip, Vector3.zero);
-            Debug.Log("Playing audio: " + audio_name);
+            source.Play();
         }
         else
         {
             Debug.LogWarning("音频不存在" + audio_name);
         }
     }//播放音频
+    public void StartInteraction(string interaction_name)
+    {
+        button_continue.gameObject.SetActive(false);       
+        StartCoroutine(Interaction(interaction_name));
 
-
+    }//开始交互环节
+    IEnumerator Interaction(string interaction_name)
+    {
+        Interaction interaction = Dic_Name_Interaction[interaction_name];
+        yield return interaction.Interactions();
+        button_continue.gameObject.SetActive(true);
+    }//交互协程
     public void ClearImage(int image_position)
     {
         spriterenderers[image_position].sprite = null;
         Debug.Log("Cleared image at position: " + image_position);
     }//清除图像
+    public void ClearImage(string image_name)
+    {
+        GameObject target = gameobjects.Find(obj => obj.name ==image_name);
+        Destroy(target);
+    }//清除用坐标显示的图像
     public void StopPlayAudio(string audio_name)
     {
-
-    }//停止播放音频
-
+        AudioSource source = Dic_Name_Audio[audio_name];
+        if (source != null)
+        {
+            source.Stop();
+        }
+        else
+        {
+            Debug.LogWarning("音频不存在" + audio_name);
+        }//停止播放音频
+    }
     public void ReadCommand(string command)
     {
         Debug.Log("Reading command: " + command);
@@ -161,14 +206,21 @@ public class ProcessController : MonoBehaviour
                 int image_position = int.Parse(singlecommand[1]);
                 ClearImage(image_position);
             }
-            else if (singlecommand[0]=="continue")
+            else if(singlecommand[0] == "stopaudio")
             {
-            
+                command_content = singlecommand[1];
+                StopPlayAudio(command_content);
+            }
+            else if (singlecommand[0] == "continue")
+            {
+
                 Debug.Log("Command: continue to process ID " + processID);
                 Processor(processID);
             }
             else if (singlecommand[0] == "interaction")
             {
+                command_content = singlecommand[1];
+                StartInteraction(command_content);
             }
         }
 
@@ -190,13 +242,9 @@ public class ProcessController : MonoBehaviour
         {
             ShowDialog(process_ID);
             processID = dialogrows[process_ID].process_next;
-        }else if (process_type=="d")//交互
-        {
-            
         }
         ReadCommand(dialogrows[process_ID].command);
     }//进程控制器
-
     public void ButtonContinueClick()
     {
         Processor(processID);
@@ -205,6 +253,7 @@ public class ProcessController : MonoBehaviour
     {
         processID = index;
         Processor(processID);
+        PlayAudio("click1");
         for (int i = 0; i < optiongroup.childCount; i++)
         {
             Destroy(optiongroup.GetChild(i).gameObject);
@@ -242,8 +291,11 @@ public class ProcessController : MonoBehaviour
         Dic_Name_Background["dormitory"] = sprite_backgrounds[2];
         #endregion
         #region 初始化音频字典
-        Dic_Name_Audio["click1"]= audioclips[0];
-        Dic_Name_Audio["bgm1"] = audioclips[1];
+        Dic_Name_Audio["click1"]= audiosources[0];
+        Dic_Name_Audio["bgm1"] = audiosources[1];
+        #endregion
+        #region 初始化交互
+        Dic_Name_Interaction["Interaction_test"]= interactions[0];
         #endregion
         Debug.Log("Awake finished");
     }

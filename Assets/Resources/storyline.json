@@ -16,7 +16,7 @@
     "image_name": "father",
     "image_size": 0.8,
     "image_position": 1,
-    "command": "audio=click1,background=desk",
+    "command": "background=desk,interaction=Interaction_test",
     "process_next": 3
   },
   {
@@ -66,7 +66,7 @@
     "image_name": "father",
     "image_size": 1,
     "image_position": 1,
-    "command": "clearimage=2,",
+    "command": "clearimage=2",
     "process_next": 4
   }
 ]
