@@ -25,15 +25,21 @@ public class Interaction_LimitedTimeToChoose : Interaction
 
     private void DestroyBar()
     {
+        for (int i = 0; i < buttons.Length; i++)
+            buttons[i].onClick.RemoveListener(DestroyBar);
+        Debug.Log("销毁倒计时UI");
         Destroy(obj);
     }
 
     public void ClickButtonWithEffect(int buttonIndex)
     {
-        Button targetButton = buttons[buttonIndex];
-        // 模拟鼠标点击：先按下去，再弹起
-        ExecuteEvents.Execute(targetButton.gameObject, new PointerEventData(EventSystem.current), ExecuteEvents.pointerDownHandler);
-        ExecuteEvents.Execute(targetButton.gameObject, new PointerEventData(EventSystem.current), ExecuteEvents.pointerUpHandler);
-        ExecuteEvents.Execute(targetButton.gameObject, new PointerEventData(EventSystem.current), ExecuteEvents.pointerClickHandler);
+        if (buttons[buttonIndex] != null)
+        {
+            Button targetButton = buttons[buttonIndex];
+            // 模拟鼠标点击：先按下去，再弹起
+            ExecuteEvents.Execute(targetButton.gameObject, new PointerEventData(EventSystem.current), ExecuteEvents.pointerDownHandler);
+            ExecuteEvents.Execute(targetButton.gameObject, new PointerEventData(EventSystem.current), ExecuteEvents.pointerUpHandler);
+            ExecuteEvents.Execute(targetButton.gameObject, new PointerEventData(EventSystem.current), ExecuteEvents.pointerClickHandler);
+        }
     }
 }

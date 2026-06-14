@@ -8,7 +8,19 @@ public class CountDownBar : MonoBehaviour
     public float time;
     private GameObject fillarea;
     private float fillamount;
-    // Start is called before the first frame update
+    
+    public void CountDown()
+    {
+        if (fillarea.GetComponent<Image>().fillAmount > 0)
+        {
+            fillarea.GetComponent<Image>().fillAmount -= Time.deltaTime / time;
+        }
+        if (fillarea.GetComponent<Image>().fillAmount <= 0)
+        {
+            Destroy(gameObject);
+        }
+    }
+
     void OnEnable()
     {
         fillarea = GameObject.Find("Fill Area");
@@ -16,16 +28,10 @@ public class CountDownBar : MonoBehaviour
         
     }
 
+
     void Update()
     {
-        if (fillarea.GetComponent<Image>().fillAmount > 0)
-        {
-            fillarea.GetComponent<Image>().fillAmount -= Time.deltaTime / time;           
-        }
-        if(fillarea.GetComponent<Image>().fillAmount <= 0)
-        {
-            Destroy(gameObject);
-        }
+        CountDown();
     }
 
 }
