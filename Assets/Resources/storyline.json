@@ -41,22 +41,22 @@
   },
   {
     "process_ID": 4,
-    "command_before": "",
+    "command_before": "imagefade;audiofade",
     "dialog": "orz",
     "image": "",
     "background": "",
     "audio": "",
-    "command_after": "ScreenShake",
+    "command_after": "",
     "process_next": 5
   },
   {
     "process_ID": 5,
-    "command_before": "",
+    "command_before": "effect,ScreenShake;imagefadetime,3",
     "dialog": "唉唉唉",
     "image": "father,0,0.7;",
     "background": "",
     "audio": "",
-    "command_after": "clearimage,classmates",
+    "command_after": "clearimage,classmates;effect,ScreenShake",
     "process_next": 6
   },
   {
@@ -67,6 +67,16 @@
     "background": "",
     "audio": "bgm1",
     "command_after": "",
-    "process_next": 4
+    "process_next": 7
+  },
+  {
+    "process_ID": 7,
+    "command_before": "interaction,viewchange;uifade;hideui",
+    "dialog": "",
+    "image": "",
+    "background": "",
+    "audio": "",
+    "command_after": "",
+    "process_next": 8
   }
 ]

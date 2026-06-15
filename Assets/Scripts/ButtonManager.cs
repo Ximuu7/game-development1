@@ -18,9 +18,8 @@ public class ButtonManager : MonoBehaviour
     public GameObject canvas_start;
     public GameObject canvas_background;
     public GameObject roles;
-
     Vector3 button_position_backtostart;
-    bool isgaming = false;
+    public bool isgaming = false;
 
     public void Display_FullScreen(bool isOn)
     {
@@ -43,17 +42,7 @@ public class ButtonManager : MonoBehaviour
     public void VolumeController_Effect()
     {
     }// 音效控制
-    public void ChangeState_MainUI()
-    {
-        if ((Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape)) && canvas_main.activeSelf)
-        {
-            canvas_main.SetActive(false);
-        }
-        else if ((Input.GetMouseButtonDown(1)||Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Escape)) && !canvas_main.activeSelf)
-        {
-            canvas_main.SetActive(true);
-        }
-    }//隐藏文本框和UI
+    
     public void CountDown() 
     {      
         
@@ -132,10 +121,7 @@ public class ButtonManager : MonoBehaviour
 
     private void Update()
     {
-        if (isgaming)
-        {
-            ChangeState_MainUI();
-        }
+        
     }
 
     private void Start()

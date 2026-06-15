@@ -38,6 +38,7 @@ public class ScreenShakeReceiver : MonoBehaviour
         }
         currentOffsetX = 0f;
         currentOffsetY = 0f;
+        
     }
 
     void OnRenderImage(RenderTexture src, RenderTexture dest)

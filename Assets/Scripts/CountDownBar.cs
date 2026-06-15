@@ -8,7 +8,6 @@ public class CountDownBar : MonoBehaviour
     public float time;
     private GameObject fillarea;
     private float fillamount;
-    
     public void CountDown()
     {
         if (fillarea.GetComponent<Image>().fillAmount > 0)
