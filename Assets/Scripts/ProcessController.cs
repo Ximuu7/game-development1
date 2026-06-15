@@ -20,9 +20,7 @@ public class ProcessController : MonoBehaviour
     public Camera mainCamera;
     public Button option; // 选项按钮预制体
     public Transform optiongroup; // 选项按钮的父物体
-    public string command_type;
-    public string command_content;
-    public Image background;
+
     public GameObject roles;
 
     [System.Serializable]
@@ -37,13 +35,24 @@ public class ProcessController : MonoBehaviour
         public string command_after; // 命令
         public int process_next; // 下一个进程ID
     }//数据结构
-
+    #region 状态检测
+    public bool allowtoskip=false;
     private bool isoption = false;//是否在选项环节
-    private bool isinteraction = false;//是否在交互环节
+    private bool inoption = false;
     private bool imagefade = false;//是否在进行图像渐变
     private bool backgroundfade = false;//是否在进行背景渐变
     private bool audiofade = false;//是否在进行音频渐变
     private bool uifade = false;//是否在进行UI渐变
+    private bool imagefadefinished = true;
+    private bool backgroundfadefinished = true;
+    private bool audiofadefinished = true;
+    private bool textfadefinished=true;
+
+    public float imagefadetime=1f;
+    public float backgroundfadetime=1f;
+    public float audiofadetime=1f;
+    public float textfadetime=0.1f;
+    #endregion
 
     public Dictionary<string,Sprite> Dic_Name_Image = new Dictionary<string,Sprite>();
     public Dictionary<string,Sprite> Dic_Name_Background = new Dictionary<string,Sprite>();
@@ -56,6 +65,7 @@ public class ProcessController : MonoBehaviour
     public List<Dialogrows> dialogrows=new List<Dialogrows>();//对话数据
     public List<Sprite> sprite_roles;//角色图像
     public List<GameObject> gameobjects=new List<GameObject>();//临时生成的物体
+    public List<Image> backgrounds=new List<Image>();//背景
     public List<Sprite> sprite_backgrounds;//背景图像
     public List<SpriteRenderer> spriterenderers = new List<SpriteRenderer>();  // 用于显示图像的SpriteRenderer组件
     public List<AudioSource> audiosources = new List<AudioSource>();// 音频
@@ -78,7 +88,7 @@ public class ProcessController : MonoBehaviour
         }
         dialogtext.text = dialog;
     }//显示文本
-    #region 图像的函数
+    #region 图像的方法
     private void ShowImage(string image_name,int image_position,float image_size)
     {
         Sprite sprite = Dic_Name_Image[image_name];
@@ -137,23 +147,36 @@ public class ProcessController : MonoBehaviour
             }
             if (imagefade)
             {
-                StartCoroutine(FadeInSprite(spriterenderers[int.Parse(singlecommand[1])], 1f));
+                StartCoroutine(FadeInSprite(spriterenderers[int.Parse(singlecommand[1])], imagefadetime));
             }
         }
     }//显示图像
 
     private void ShowBackground(string image_background)
     {
+        
         if(image_background=="")
         {
             return;
         }
-        Sprite sprite = Dic_Name_Background[image_background];
-        background.sprite = sprite;
+        string[] commands = image_background.Split(';');
+        for (int i = 0; i < commands.Length; i++)
+        {
+            string[] singlecommand = commands[i].Split(',');
+            Sprite sprite = Dic_Name_Background[singlecommand[0]];
+            int index=int.Parse(singlecommand[1]);
+            backgrounds[index].sprite = sprite;
+            if (backgroundfade)
+            {
+                StartCoroutine(FadeInImage(backgrounds[index], backgroundfadetime));
+            }
+        }
+        
     }//显示背景
 
-    private void ChangeImageColor(Image image, Color from, Color to, float duration)
+    private IEnumerator ChangeImageColor(Image image, Color from, Color to, float duration)
     {
+        backgroundfadefinished = false;
         image.color = from;
         float elapsed = 0f;
         while (elapsed < duration)
@@ -161,12 +184,15 @@ public class ProcessController : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
             image.color = Color.Lerp(from, to, t);
-            
+            yield return null;
+
         }
         image.color = to;
+        backgroundfadefinished = true;
     }//改变Image颜色
     private IEnumerator ChangeSpriteColor(SpriteRenderer spriteRenderer, Color from, Color to, float duration)
     {
+        imagefadefinished = false;
         spriteRenderer.color = from;
         float elapsed = 0f;
         while (elapsed < duration)
@@ -177,20 +203,19 @@ public class ProcessController : MonoBehaviour
             yield return null;   
         }
         spriteRenderer.color = to;
-    }
-    private void FadeInImage(string image_name, float duration)
+        imagefadefinished = true;
+    }//改变sprite颜色
+    private IEnumerator FadeInImage(Image image, float duration)
     {
-        Image image = Dic_Name_Image[image_name].GetComponent<Image>();
         Color from = new Color(image.color.r, image.color.g, image.color.b, 0f);
         Color to = new Color(image.color.r, image.color.g, image.color.b, 1f);
-        ChangeImageColor(image, from, to, duration);
+        yield return StartCoroutine(ChangeImageColor(image, from, to, duration));
     }//图像淡入
-    private void FadeOutImage(string image_name, float duration)
+    private IEnumerator FadeOutImage(Image image, float duration)
     {
-        Image image = Dic_Name_Image[image_name].GetComponent<Image>();
         Color from = new Color(image.color.r, image.color.g, image.color.b, 1f);
         Color to = new Color(image.color.r, image.color.g, image.color.b, 0f);
-        ChangeImageColor(image, from, to, duration);
+        yield return StartCoroutine(ChangeImageColor(image, from, to, duration));
     }//图像淡出
     private IEnumerator FadeInSprite(SpriteRenderer spriteRenderer, float duration)
     {
@@ -207,12 +232,28 @@ public class ProcessController : MonoBehaviour
 
     private void ClearImage(int image_position)
     {
+        if (imagefade)
+        {
+            SpriteRenderer spriterenderer=spriterenderers[image_position];
+            FadeOutSprite(spriterenderer,imagefadetime);
+        }
         spriterenderers[image_position].sprite = null;
         Debug.Log("Cleared image at position: " + image_position);
     }//清除图像
     private void ClearImage(string image_name)
     {
         GameObject target = gameobjects.Find(obj => obj.name == image_name);
+        if (target == null)
+        {
+            Debug.Log("需要清除的图像不存在"+image_name);
+            return;
+        }
+        SpriteRenderer spriterenderer=target.GetComponent<SpriteRenderer>();
+        if (imagefade)
+        {
+            FadeOutSprite(spriterenderer,imagefadetime);
+        }
+        
         Destroy(target);
     }//清除用坐标显示的图像
     #endregion
@@ -223,25 +264,34 @@ public class ProcessController : MonoBehaviour
         {
             return;
         }
-        AudioSource source = Dic_Name_Audio[audio_name];
-        if (source != null)
+        string[] commands = audio_name.Split(';');
+        for (int i = 0; i < commands.Length; i++)
         {
-            source.Play();
-        }
-        else
-        {
-            Debug.LogWarning("音频不存在" + audio_name);
-        }
-        if (audiofade)
-        {
-            StartCoroutine(FadeInAudio(audio_name, 1f));
+            AudioSource source = Dic_Name_Audio[audio_name];
+            if (source != null)
+            {
+                source.Play();
+            }
+            else
+            {
+                Debug.LogWarning("音频不存在" + audio_name);
+            }
+            if (audiofade)
+            {
+                StartCoroutine(FadeInAudio(audio_name, audiofadetime));
+            }
         }
     }//播放音频
     private void StopPlayAudio(string audio_name)
     {
         AudioSource source = Dic_Name_Audio[audio_name];
+
         if (source != null)
         {
+            if (audiofade)
+            {
+                FadeOutAudio(audio_name, audiofadetime);
+            }
             source.Stop();
         }
         else
@@ -251,6 +301,7 @@ public class ProcessController : MonoBehaviour
     }//停止播放音频
     private IEnumerator FadeVolume(string audio_name, float startVolume, float targetVolume, float duration)
     {
+        audiofadefinished = false;
         AudioSource source = Dic_Name_Audio[audio_name];
         float startVol = source.volume;
         float elapsed = 0f;
@@ -261,6 +312,7 @@ public class ProcessController : MonoBehaviour
             yield return null;
         }
         source.volume = targetVolume;
+        audiofadefinished=true;
 
     }//音频响度渐变
     private IEnumerator FadeInAudio(string audio_name, float duration)
@@ -274,19 +326,19 @@ public class ProcessController : MonoBehaviour
     {
         AudioSource source = Dic_Name_Audio[audio_name];
         yield return StartCoroutine(FadeVolume(audio_name, source.volume, 0f, duration));
-        source.Stop();
     }//音频淡出
     #endregion
-    /*private void ShowDialog(int process_ID)
-    {
-        if(dialogrows[process_ID].dialog!="")
-            ShowText(dialogrows[process_ID].dialog);
-        if (dialogrows[process_ID].image_name != "")
-            ShowImage(dialogrows[process_ID].image_name, dialogrows[process_ID].image_position, dialogrows[process_ID].image_size);
-    }//显示“对话”*/
     private void ShowOptions(int process_ID)
     {
-        CommandReader(dialogrows[process_ID].command_before);
+        string[] commands = dialogrows[process_ID].command_before.Split(';');
+        for (int i = 0; i < commands.Length; i++)
+        {
+            string[] singlecommand = commands[i].Split(',');
+            if (singlecommand[0] == "option")
+            {
+                isoption = true;
+            }
+        }
         if (isoption)
         {
             GameObject button = Instantiate(option.gameObject, optiongroup);
@@ -317,6 +369,7 @@ public class ProcessController : MonoBehaviour
     }//开始交互环节
     IEnumerator Interaction(Interaction interaction)
     {
+        Debug.Log("interaction");
         yield return interaction.Interactions();
         button_continue.gameObject.SetActive(true);
     }//交互协程
@@ -333,6 +386,12 @@ public class ProcessController : MonoBehaviour
         a.gameObject.SetActive(false);
         b.gameObject.SetActive(false);
         c.gameObject.SetActive(false);
+        if(uifade)
+        {
+            StartCoroutine(FadeOutImage(a.GetComponent<Image>(), 1f));
+            StartCoroutine(FadeOutImage(b.GetComponent<Image>(), 1f));
+            StartCoroutine(FadeOutImage(c.GetComponent<Image>(), 1f));
+        }
 
     }//隐藏UI
     private void ShowUI()
@@ -343,6 +402,12 @@ public class ProcessController : MonoBehaviour
         a.gameObject.SetActive(true);
         b.gameObject.SetActive(true);
         c.gameObject.SetActive(true);
+        if (uifade)
+        {
+            StartCoroutine(FadeInImage(a.GetComponent<Image>(), 1f));
+            StartCoroutine(FadeInImage(b.GetComponent<Image>(), 1f));
+            StartCoroutine(FadeInImage(c.GetComponent<Image>(), 1f));
+        }
     }//显示UI
     private void HideContinueButton()
     {
@@ -353,6 +418,10 @@ public class ProcessController : MonoBehaviour
     {
         button_continue.gameObject.SetActive(true);
     }//显示继续按钮
+    private IEnumerator processfinishedchecker()
+    {
+       yield return new WaitUntil(() => textfadefinished && backgroundfadefinished && audiofadefinished && imagefadefinished);
+    }//进程完成检查
     private void CommandReader(string command)
     {
         if (command != "")
@@ -397,9 +466,13 @@ public class ProcessController : MonoBehaviour
                 if (singlecommand[0] == "clearimage")
                 {
                     if (int.TryParse(singlecommand[1], out int value))
+                    {
                         ClearImage(value);
+                    }
                     else
+                    {
                         ClearImage(singlecommand[1]);
+                    }
                     if (imagefade)
                     {
                         FadeOutSprite(spriterenderers[value], 1f);
@@ -413,13 +486,33 @@ public class ProcessController : MonoBehaviour
                         FadeOutAudio(singlecommand[1], 1f);
                     }
                 }
+                if (singlecommand[0] == "hideui")
+                {
+                    HideUI();
+                }
+                if (singlecommand[0] == "showui")
+                {
+                    ShowUI();
+                }
+                if (singlecommand[0] == "skip")
+                {
+                    allowtoskip = true;
+                }
+                if (singlecommand[0] == "noskip")
+                {
+                    allowtoskip=false;
+                }
                 if (singlecommand[0] == "option")
                 {
                     isoption = true;
                 }
+                if (singlecommand[0] == "effect")
+                {
+                    ShowEffect(singlecommand[1]);
+                }
                 if (singlecommand[0] == "interaction")
                 {
-                    isinteraction = true;
+                    StartInteraction(singlecommand[1]);
                 }
                 if (singlecommand[0] == "continue")
                 {
@@ -428,17 +521,24 @@ public class ProcessController : MonoBehaviour
             }
         }
     }//命令读取
-    private void Processor(int process_ID)//进程控制器
+    public void Processor()
     {
+        StartCoroutine(Processor(processID));
+    }//进程控制器
+    private IEnumerator Processor(int process_ID)//进程控制器
+    {
+        Debug.Log("processID=" + processID);
         processID = dialogrows[process_ID].process_next;
+        inoption = false;
+        if (!allowtoskip)
+        {
+            HideContinueButton();
+        }
         CommandReader(dialogrows[process_ID].command_before);    
         if(isoption)
         {
             ShowOptions(process_ID);
-        }
-        else if(isinteraction)
-        {
-            StartInteraction(dialogrows[process_ID].command_after);
+            inoption=true;
         }
         else
         {
@@ -447,8 +547,14 @@ public class ProcessController : MonoBehaviour
             StartCoroutine(Background(process_ID));
             StartCoroutine(Audio(process_ID));
         }
-
+        yield return StartCoroutine(processfinishedchecker());
+        if (!inoption)
+        {
+            ShowContinueButton();
+        }
+        Debug.Log("over");
         CommandReader(dialogrows[process_ID].command_after);
+        isoption = false;
 
     }
 
@@ -456,42 +562,56 @@ public class ProcessController : MonoBehaviour
     {
         if (dialogrows[index].dialog != "")
         {
+            
             ShowText(dialogrows[index].dialog);
             yield return null;
+            
         }
     }
     private IEnumerator Image(int index)
     {
         if (dialogrows[index].image != null)
         {
+            
             ShowImage(index);
-                yield return null;
+            if (!allowtoskip)
+            {
+                yield return new WaitWhile(() => imagefadefinished);
+            }
+            yield return null;
+            
         }
     }
     private IEnumerator Background(int index)
     {
         if (dialogrows[index].background != null)
         {
+            
             ShowBackground(dialogrows[index].background);
+            if (!allowtoskip)
+            {
+                yield return new WaitWhile(() => backgroundfadefinished);
+            }
             yield return null;
+            
         }
     }
     private IEnumerator Audio(int index)
     {
         if (dialogrows[index].audio != "")
         {
+            
             PlayAudio(dialogrows[index].audio);
+            if (!allowtoskip)
+            {
+                yield return new WaitWhile(() => audiofadefinished);
+            }
             yield return null;
+            
         }
     }
 
     //*************************以下是按钮功能***************************//
-    private void ButtonContinueClick()
-    {
-        Processor(processID);
-
-
-    }//继续（隐藏按钮）
     private void OnOptionClick(int index)
     {
         processID = index;
@@ -535,7 +655,10 @@ public class ProcessController : MonoBehaviour
         Dic_Name_Audio["bgm1"] = audiosources[1];
         #endregion
         #region 初始化交互
-        Dic_Name_Interaction["Interaction_LimitedTimeToChoose"] = interactions[0];
+        Dic_Name_Interaction["LimitedTimeToChoose"] = interactions[0];
+        #endregion
+        #region 初始化效果
+        Dic_Name_Effect["ScreenShake"] = effects[0];
         #endregion
         Debug.Log("Awake finished");
     }

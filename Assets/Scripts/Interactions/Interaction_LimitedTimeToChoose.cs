@@ -14,6 +14,7 @@ public class Interaction_LimitedTimeToChoose : Interaction
     
     public override IEnumerator Interactions()
     {
+        yield return null;
         obj = Instantiate(countdownbar, canvas_main.transform);
         Transform parent = GameObject.Find("Options").transform;
         buttons = parent.GetComponentsInChildren<Button>(false);
@@ -27,7 +28,7 @@ public class Interaction_LimitedTimeToChoose : Interaction
     {
         for (int i = 0; i < buttons.Length; i++)
             buttons[i].onClick.RemoveListener(DestroyBar);
-        Debug.Log("销毁倒计时UI");
+        Debug.Log("销毁倒计时listener");
         Destroy(obj);
     }
 
@@ -35,6 +36,7 @@ public class Interaction_LimitedTimeToChoose : Interaction
     {
         if (buttons[buttonIndex] != null)
         {
+            Debug.Log(buttonIndex);
             Button targetButton = buttons[buttonIndex];
             // 模拟鼠标点击：先按下去，再弹起
             ExecuteEvents.Execute(targetButton.gameObject, new PointerEventData(EventSystem.current), ExecuteEvents.pointerDownHandler);
