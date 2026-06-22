@@ -14,6 +14,7 @@ public class ProcessController : MonoBehaviour
 {
     public int processID=0;
     public TextAsset jsonfile;
+    public TMP_FontAsset fontAsset;
     public Canvas canvas_main;
     public Button button_continue;
     public Camera mainCamera;
@@ -40,6 +41,7 @@ public class ProcessController : MonoBehaviour
     private bool ininteraction = false;
     private bool inoption = false;
     [HideInInspector] public bool imagefade = false;//是否在进行图像渐变
+    [HideInInspector] public bool textfade = false;//tmp渐变
     [HideInInspector] public bool backgroundfade = false;//是否在进行背景渐变
     [HideInInspector] public bool audiofade = false;//是否在进行音频渐变
     [HideInInspector] public bool uifade = false;//是否在进行UI渐变
@@ -53,13 +55,14 @@ public class ProcessController : MonoBehaviour
     public float audiofadetime=1f;
     public float textfadetime=0.1f;
     #endregion
-
+    #region Dictionaries
     public Dictionary<string,Sprite> Dic_Name_Image = new Dictionary<string,Sprite>();
     public Dictionary<string,Sprite> Dic_Name_Background = new Dictionary<string,Sprite>();
     public Dictionary<string,AudioSource> Dic_Name_Audio = new Dictionary<string, AudioSource>();
     public Dictionary<string,AnimationClip> Dic_Name_Animation = new Dictionary<string, AnimationClip>();
     public Dictionary<string,Interaction> Dic_Name_Interaction = new Dictionary<string,Interaction>();
     public Dictionary<string,Effect> Dic_Name_Effect = new Dictionary<string, Effect>();
+    #endregion
 
     public TMP_Text dialogtext;//对话文本组件
     public List<Dialogrows> dialogrows=new List<Dialogrows>();//对话数据
@@ -80,40 +83,119 @@ public class ProcessController : MonoBehaviour
         jsonfile = Resources.Load<TextAsset>(str);
         dialogrows= JsonConvert.DeserializeObject<List<Dialogrows>>(jsonfile.text);
     }//读取文件
-    private void ShowText(string dialog)
+    #region 文本方法
+    public IEnumerator ShowText(string dialog)
     {
         if (dialog == "")
         {
-            return;
+            yield break;
         }
         dialogtext.text = dialog;
-    }//显示文本
-    #region 图像的方法
-    private IEnumerator ShowImage(string image_name,int image_position,float image_size)
+        if (textfade)
+        {
+            StartCoroutine(FadeInText(dialogtext.gameObject.GetComponent<TextMeshProUGUI>(),textfadetime));
+        }
+        yield return null;
+    }//显示对话文本
+    public IEnumerator ShowText(string text_name,string text,float x,float y)
     {
-        Sprite sprite = Dic_Name_Image[image_name];
-        spriterenderers[image_position].sprite = sprite;
+        if (text == "" || text_name == "")
+        {
+            yield break;
+        }
+        GameObject textt = new GameObject(text_name);
+        gameobjects.Add(textt);
+        textt.transform.SetParent(roles.transform, false);
+        textt.transform.position=new Vector3(x,y,100);
+        TextMeshPro tmp= textt.AddComponent<TextMeshPro>();
+        tmp.font = fontAsset;
+        tmp.text = text;
+        if (textfade)
+        {
+            StartCoroutine(FadeInText((TextMeshPro)tmp, textfadetime)); 
+        }
+        yield return null;
+    }//创建物体显示文本
+    public IEnumerator ChangeTextColor(TMP_Text text, Color from, Color to, float duration)
+    {
+        textfadefinished = false;
+        text.color = from;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            text.color = Color.Lerp(from, to, t);
+            yield return null;
+        }
+        text.color = to;
+        textfadefinished = true;
+    }//改变文本颜色
+
+    public IEnumerator FadeInText(TMP_Text text, float duration)
+    {
+        Color from = new Color(text.color.r, text.color.g, text.color.b, 0f);
+        Color to = new Color(text.color.r, text.color.g, text.color.b, 1f);
+        yield return StartCoroutine(ChangeTextColor(text, from, to, duration));
+    }//淡入文本
+    public IEnumerator FadeOutText(TMP_Text text, float duration)
+    {
+        Color from = new Color(text.color.r, text.color.g, text.color.b, 1f);
+        Color to = new Color(text.color.r, text.color.g, text.color.b, 0f);
+        yield return StartCoroutine(ChangeTextColor(text, from, to, duration));
+    }//淡出文本
+    public IEnumerator ClearText(string text)
+    {
+        if (text == "")
+        {
+            yield break;
+        }
+        if (textfade)
+        {
+            yield return StartCoroutine(FadeOutText(dialogtext, textfadetime));
+        }
+        dialogtext.text = "";
+    }//清除对话文本
+    public IEnumerator ClearText(TMP_Text text_name,string text)
+    {
+        if(text == "" || text_name == null)
+        {
+            yield break;
+        }
+        if (textfade)
+        {
+            yield return StartCoroutine(FadeOutText(dialogtext, textfadetime));
+        }
+        Destroy(text_name.gameObject); 
+
+    }//清除程序创建的文本
+    #endregion
+    #region Sprite方法
+    public IEnumerator ShowSprite(string sprite_name,int sprite_position,float sprite_size)
+    {
+        Sprite sprite = Dic_Name_Image[sprite_name];
+        spriterenderers[sprite_position].sprite = sprite;
         Camera camera = Camera.main;
         float screenY = camera.orthographicSize * 2f;
         float screenX = screenY * camera.aspect;
-        float spriteY = spriterenderers[image_position].sprite.bounds.size.y;
-        float spriteX = spriterenderers[image_position].sprite.bounds.size.x;
+        float spriteY = spriterenderers[sprite_position].sprite.bounds.size.y;
+        float spriteX = spriterenderers[sprite_position].sprite.bounds.size.x;
         float scaleX = screenX / spriteX;
         float scaleY = screenY / spriteY;
-        float uniformScale = image_size * Mathf.Min(scaleX, scaleY);
+        float uniformScale = sprite_size * Mathf.Min(scaleX, scaleY);
 
-        spriterenderers[image_position].transform.localScale = new Vector3(uniformScale, uniformScale, 1f);
+        spriterenderers[sprite_position].transform.localScale = new Vector3(uniformScale, uniformScale, 1f);
         yield return null;
 
     }//用位置显示图像
-    private IEnumerator ShowImage(string image_name,float image_positionX,float image_positionY,float image_size)
+    public IEnumerator ShowSprite(string sprite_name,float spite_positionX,float sprite_positionY,float sprite_size)
     {
-        Sprite sprite = Dic_Name_Image[image_name];
-        GameObject obj=new GameObject(sprite.name);
-        gameobjects.Add(obj);
-        obj.transform.SetParent(roles.transform);
-        obj.transform.position=new Vector3(image_positionX,image_positionY,100);
-        SpriteRenderer spriterenderer=obj.AddComponent<SpriteRenderer>();
+        Sprite sprite = Dic_Name_Image[sprite_name];
+        GameObject spritee=new GameObject(sprite.name);
+        gameobjects.Add(spritee);
+        spritee.transform.SetParent(roles.transform);
+        spritee.transform.position=new Vector3(spite_positionX,sprite_positionY,100);
+        SpriteRenderer spriterenderer=spritee.AddComponent<SpriteRenderer>();
         spriterenderer.sprite = sprite;
         Camera camera = Camera.main;
         float screenY = camera.orthographicSize * 2f;
@@ -122,13 +204,13 @@ public class ProcessController : MonoBehaviour
         float spriteX = spriterenderer.sprite.bounds.size.x;
         float scaleX = screenX / spriteX;
         float scaleY = screenY / spriteY;
-        float uniformScale = image_size * Mathf.Min(scaleX, scaleY);
+        float uniformScale = sprite_size * Mathf.Min(scaleX, scaleY);
 
         spriterenderer.transform.localScale = new Vector3(uniformScale, uniformScale, 1f);
         yield return null;
 
     }//用坐标显示图像
-    public IEnumerator ShowImage(int index)
+    public IEnumerator ShowSprite(int index)
     {
         string image = dialogrows[index].image;
         if (image == "")
@@ -141,7 +223,7 @@ public class ProcessController : MonoBehaviour
             string[] singlecommand = commands[i].Split(',');
             if (singlecommand.Length == 4)
             {
-                StartCoroutine(ShowImage(singlecommand[0], float.Parse(singlecommand[1]), float.Parse(singlecommand[2]), float.Parse(singlecommand[3])));
+                StartCoroutine(ShowSprite(singlecommand[0], float.Parse(singlecommand[1]), float.Parse(singlecommand[2]), float.Parse(singlecommand[3])));
                 if (imagefade)
                 {
                     GameObject target = gameobjects.Find(obj => obj.name == singlecommand[0]);
@@ -152,7 +234,7 @@ public class ProcessController : MonoBehaviour
             }
             if (singlecommand.Length == 3)
             {
-                StartCoroutine(ShowImage(singlecommand[0], int.Parse(singlecommand[1]), float.Parse(singlecommand[2])));
+                StartCoroutine(ShowSprite(singlecommand[0], int.Parse(singlecommand[1]), float.Parse(singlecommand[2])));
                 if (imagefade)
                 {
                     StartCoroutine(FadeInSprite(spriterenderers[int.Parse(singlecommand[1])], imagefadetime));
@@ -160,15 +242,71 @@ public class ProcessController : MonoBehaviour
             }
         }
         yield return null;
-    }//显示图像
-    public IEnumerator ShowBackground(string image_background)
+    }//根据文件显示图像
+    private IEnumerator ChangeSpriteColor(SpriteRenderer spriteRenderer, Color from, Color to, float duration)
+    {
+        imagefadefinished = false;
+        spriteRenderer.color = from;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            spriteRenderer.color = Color.Lerp(from, to, t);
+            yield return null;
+        }
+        spriteRenderer.color = to;
+        imagefadefinished = true;
+    }//改变sprite颜色
+    private IEnumerator FadeInSprite(SpriteRenderer spriteRenderer, float duration)
+    {
+        Color from = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0f);
+        Color to = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
+        yield return StartCoroutine(ChangeSpriteColor(spriteRenderer, from, to, duration));
+    }//Sprite淡入
+    private IEnumerator FadeOutSprite(SpriteRenderer spriteRenderer, float duration)
+    {
+        Color from = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
+        Color to = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0f);
+        yield return StartCoroutine(ChangeSpriteColor(spriteRenderer, from, to, duration));
+    }//Sprite淡出
+    public IEnumerator ClearSprite(int sprite_position)
+    {
+        if (imagefade)
+        {
+            SpriteRenderer spriterenderer = spriterenderers[sprite_position];
+            yield return StartCoroutine(FadeOutSprite(spriterenderer, imagefadetime));
+        }
+        spriterenderers[sprite_position].sprite = null;
+        Debug.Log("Cleared image at position: " + sprite_position);
+        yield return null;
+    }//清除图像
+    public IEnumerator ClearSprite(string sprite_name)
+    {
+        GameObject target = gameobjects.Find(obj => obj.name == sprite_name);
+        if (target == null)
+        {
+            Debug.Log("需要清除的图像不存在" + sprite_name);
+            yield break;
+        }
+        SpriteRenderer spriterenderer = target.GetComponent<SpriteRenderer>();
+        if (imagefade)
+        {
+            yield return StartCoroutine(FadeOutSprite(spriterenderer, imagefadetime));
+        }
+        Destroy(target);
+        yield return null;
+    }//清除用坐标显示的图像
+    #endregion
+    #region Image方法
+    public IEnumerator ShowBackground(string background)
     {
         
-        if(image_background=="")
+        if(background=="")
         {
             yield break;
         }
-        string[] commands = image_background.Split(';');
+        string[] commands = background.Split(';');
         for (int i = 0; i < commands.Length; i++)
         {
             string[] singlecommand = commands[i].Split(',');
@@ -183,7 +321,6 @@ public class ProcessController : MonoBehaviour
         }
         
     }//显示背景
-
     private IEnumerator ChangeImageColor(Image image, Color from, Color to, float duration)
     {
         backgroundfadefinished = false;
@@ -199,22 +336,7 @@ public class ProcessController : MonoBehaviour
         }
         image.color = to;
         backgroundfadefinished = true;
-    }//改变Image颜色
-    private IEnumerator ChangeSpriteColor(SpriteRenderer spriteRenderer, Color from, Color to, float duration)
-    {
-        imagefadefinished = false;
-        spriteRenderer.color = from;
-        float elapsed = 0f;
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / duration;
-            spriteRenderer.color = Color.Lerp(from, to, t);
-            yield return null;   
-        }
-        spriteRenderer.color = to;
-        imagefadefinished = true;
-    }//改变sprite颜色
+    }//改变Image颜色   
     private IEnumerator FadeInImage(Image image, float duration)
     {
         Color from = new Color(image.color.r, image.color.g, image.color.b, 0f);
@@ -227,46 +349,6 @@ public class ProcessController : MonoBehaviour
         Color to = new Color(image.color.r, image.color.g, image.color.b, 0f);
         yield return StartCoroutine(ChangeImageColor(image, from, to, duration));
     }//图像淡出
-    private IEnumerator FadeInSprite(SpriteRenderer spriteRenderer, float duration)
-    {
-        Color from = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0f);
-        Color to = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
-        yield return StartCoroutine(ChangeSpriteColor(spriteRenderer, from, to, duration));
-    }//Sprite淡入
-    private IEnumerator FadeOutSprite(SpriteRenderer spriteRenderer, float duration)
-    {
-        Color from = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
-        Color to = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0f);
-        yield return StartCoroutine(ChangeSpriteColor(spriteRenderer, from, to, duration));
-    }//Sprite淡出
-
-    public IEnumerator ClearImage(int image_position)
-    {
-        if (imagefade)
-        {
-            SpriteRenderer spriterenderer=spriterenderers[image_position];
-            yield return StartCoroutine(FadeOutSprite(spriterenderer,imagefadetime));
-        }
-        spriterenderers[image_position].sprite = null;
-        Debug.Log("Cleared image at position: " + image_position);
-        yield return null;
-    }//清除图像
-    public IEnumerator ClearImage(string image_name)
-    {
-        GameObject target = gameobjects.Find(obj => obj.name == image_name);
-        if (target == null)
-        {
-            Debug.Log("需要清除的图像不存在"+image_name);
-            yield break;
-        }
-        SpriteRenderer spriterenderer=target.GetComponent<SpriteRenderer>();
-        if (imagefade)
-        {
-            yield return StartCoroutine(FadeOutSprite(spriterenderer, imagefadetime));
-        }
-        Destroy(target);
-        yield return null;
-    }//清除用坐标显示的图像
     public IEnumerator ClearBackground(int index)
     {
         if (backgroundfade)
@@ -280,7 +362,7 @@ public class ProcessController : MonoBehaviour
 
     }//清除背景
     #endregion
-    #region 音频的函数
+    #region 音频方法
     public IEnumerator PlayAudio(string audio_name)
     {
         if (audio_name == "")
@@ -379,12 +461,10 @@ public class ProcessController : MonoBehaviour
             ShowOptions(process_ID + 1);
         }
     }//显示选项
-   
     private void ShowAnimation(string animation_name)
     {
         Debug.Log("Playing animation: " + animation_name);
     }//显示动画
-    
     private void StartInteraction(string interaction_name)
     {
         Interaction interaction = Dic_Name_Interaction[interaction_name];
@@ -412,7 +492,7 @@ public class ProcessController : MonoBehaviour
         yield return effect.Effects();
         effect.gameObject.SetActive(false);
     }
-    public void HideUI()
+    public IEnumerator HideUI()
     {
         Transform a = canvas_main.transform.Find("dialogwindow");
         Transform b = canvas_main.transform.Find("Button_Setting");
@@ -421,13 +501,17 @@ public class ProcessController : MonoBehaviour
         {
             StartCoroutine(FadeOutImage(a.GetComponent<Image>(), imagefadetime));
             StartCoroutine(FadeOutImage(b.GetComponent<Image>(), imagefadetime));
+            StartCoroutine(FadeOutText(b.gameObject.GetComponentInChildren<TextMeshProUGUI>(), imagefadetime));
             StartCoroutine(FadeOutImage(c.GetComponent<Image>(), imagefadetime));
         }
-
+        a.gameObject.SetActive(false);
+        b.gameObject.SetActive(false);
+        c.gameObject.SetActive(false);
+        yield return null;
 
 
     }//隐藏UI
-    public void ShowUI()
+    public IEnumerator ShowUI()
     {
         Transform a = canvas_main.transform.Find("dialogwindow");
         Transform b = canvas_main.transform.Find("Button_Setting");
@@ -441,6 +525,16 @@ public class ProcessController : MonoBehaviour
             StartCoroutine(FadeInImage(b.GetComponent<Image>(), imagefadetime));
             StartCoroutine(FadeInImage(c.GetComponent<Image>(), imagefadetime));
         }
+        else
+        {
+            Image aa = a.GetComponent<Image>();
+            Image bb = b.GetComponent<Image>();
+            Image cc = c.GetComponent<Image>();
+            aa.color = new Color(aa.color.r, aa.color.g, aa.color.b, 1f);
+            bb.color = new Color(bb.color.r, bb.color.g, bb.color.b, 1f);
+            cc.color = new Color(cc.color.r, cc.color.g, cc.color.b, 1f);
+        }
+            yield return null;
     }//显示UI
     public void HideContinueButton()
     {
@@ -516,11 +610,11 @@ public class ProcessController : MonoBehaviour
                 {
                     if (int.TryParse(singlecommand[1], out int value))
                     {
-                        StartCoroutine(ClearImage(value));
+                        StartCoroutine(ClearSprite(value));
                     }
                     else
                     {
-                        StartCoroutine(ClearImage(singlecommand[1]));
+                        StartCoroutine(ClearSprite(singlecommand[1]));
                     }
                 }
                 if (singlecommand[0] == "stopaudio")
@@ -529,11 +623,11 @@ public class ProcessController : MonoBehaviour
                 }
                 if (singlecommand[0] == "hideui")
                 {
-                    HideUI();
+                    StartCoroutine(HideUI());
                 }
                 if (singlecommand[0] == "showui")
                 {
-                    ShowUI();
+                    StartCoroutine(ShowUI());
                 }
                 if (singlecommand[0] == "skip")
                 {
@@ -571,6 +665,7 @@ public class ProcessController : MonoBehaviour
     private IEnumerator Processor(int process_ID)//进程控制器
     {
         Debug.Log("processID=" + processID);
+        gameobjects.RemoveAll(obj => obj == null);
         processID = dialogrows[process_ID].process_next;
         inoption = false;
         ininteraction = false;
@@ -617,7 +712,7 @@ public class ProcessController : MonoBehaviour
         if (dialogrows[index].image != null)
         {
 
-            StartCoroutine(ShowImage(index));
+            StartCoroutine(ShowSprite(index));
             if (!allowtoskip)
             {
                 yield return new WaitWhile(() => imagefadefinished);
@@ -718,9 +813,12 @@ public class ProcessController : MonoBehaviour
         #region 初始化交互
         Dic_Name_Interaction["LimitedTimeToChoose"] = interactions[0];
         Dic_Name_Interaction["viewchange"] = interactions[1];
+        Dic_Name_Interaction["DrawBook"]=interactions[2];
         #endregion
         #region 初始化效果
         Dic_Name_Effect["ScreenShake"] = effects[0];
+        Dic_Name_Effect["Blink"]=effects[1];
+        Dic_Name_Effect["Outline"] = effects[2];
         #endregion
         Debug.Log("Awake finished");
     }
@@ -729,5 +827,7 @@ public class ProcessController : MonoBehaviour
     {
         buttonmanager = FindObjectOfType<ButtonManager>();
     }
+
+
 
 }
