@@ -8,12 +8,15 @@ public class Interaction_DrawBook : Interaction
     public ProcessController pc;
     private GameObject book;
     public Effect_SpriteOutline Outline;
-
+    public bool clicked;
     public override IEnumerator Interactions()
     {
-        
+        StartCoroutine(pc.HideUI());
+        pc.allowuichange = false;
         yield return StartCoroutine(ShowBook());
-        yield return new WaitForSeconds(1);
+        yield return new WaitUntil(()=>clicked);
+        pc.Processor();
+        pc.allowuichange = true;
        
     }
 
@@ -24,7 +27,7 @@ public class Interaction_DrawBook : Interaction
         PolygonCollider2D collider = book.AddComponent<PolygonCollider2D>();
         collider.isTrigger = true;
         book.AddComponent<SpriteOutline>(); // 添加描边
-        book.AddComponent<ColliderEvents>();
+        book.AddComponent<ColliderEvents_DrawBook>();
         Outline.receiver = book.GetComponent<SpriteOutline>();
 
         yield return null;

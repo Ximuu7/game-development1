@@ -1,13 +1,19 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-public class ColliderEvents : MonoBehaviour
+public class ColliderEvents_DrawBook : MonoBehaviour
 {
     private SpriteOutline outlineController;
     private Coroutine currentOutlineCoroutine;
+    private ProcessController processController;
+    private Interaction_DrawBook book;
 
     void Awake()
     {
         outlineController = GetComponent<SpriteOutline>();
+        GameObject obj = GameObject.Find("Interaction_DrawBook");
+        book = obj.GetComponent<Interaction_DrawBook>();
         if (outlineController == null)
             Debug.LogWarning("ColliderEvents: 未找到 SpriteOutline 组件");
     }
@@ -15,7 +21,9 @@ public class ColliderEvents : MonoBehaviour
     void OnMouseDown()
     {
         Debug.Log("鼠标左键点击了书本");
-        
+        processController.Processor();
+        book.clicked = true;
+
     }
 
     void OnMouseEnter()

@@ -1331,6 +1331,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 3716f830840eda6439fce8d04c7594ba, type: 3}
   - {fileID: 21300000, guid: e052869925996514fb14645444029f2b, type: 3}
   - {fileID: 21300000, guid: 907168a4cf10c614dbac97d28d871cd5, type: 3}
+  - {fileID: 21300000, guid: ec7bb189b85f929468c7ce2b424f5111, type: 3}
+  - {fileID: 21300000, guid: 34966fc4d443e2c4c9fe6798506256d5, type: 3}
+  - {fileID: 21300000, guid: 7f4294014954fa543912fe5f00855312, type: 3}
   gameobjects: []
   backgrounds:
   - {fileID: 683233897}
@@ -1339,6 +1342,9 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 32d2f651b42017241b6dcb576cec1895, type: 3}
   - {fileID: 21300000, guid: a78953fa44f7d454d849143f829cbbde, type: 3}
   - {fileID: 21300000, guid: 4e9cb6923920e594db20bf2f4d377a25, type: 3}
+  - {fileID: 21300000, guid: 50565dbd9888ffc4d8f1357b6a643e7d, type: 3}
+  - {fileID: 21300000, guid: 8a6690a614219904085c884c486f16d1, type: 3}
+  - {fileID: 21300000, guid: 36d32b2548cfc444cb63b526e6a7cd9d, type: 3}
   spriterenderers:
   - {fileID: 1936178313}
   - {fileID: 325144429}
@@ -1932,6 +1938,8 @@ MonoBehaviour:
   classroom: {fileID: 21300000, guid: 32d2f651b42017241b6dcb576cec1895, type: 3}
   pc: {fileID: 477498011}
   fontsize: 12
+  Outline: {fileID: 509842653}
+  clicked: 0
 --- !u!1 &683233895
 GameObject:
   m_ObjectHideFlags: 0
@@ -3431,14 +3439,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.7960785, g: 0.77647066, b: 0.75294125, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 06104ce66be9eeb47a03d5672a35abfe, type: 3}
+  m_Sprite: {fileID: 21300000, guid: e5a07726a63210c41a57f7a75b55cfe6, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -5896,6 +5904,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pc: {fileID: 477498011}
   Outline: {fileID: 509842653}
+  clicked: 0
 --- !u!1 &2014441760
 GameObject:
   m_ObjectHideFlags: 0

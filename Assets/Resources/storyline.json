@@ -64,14 +64,14 @@
     "command_before": "effect,ScreenShake;imagefadetime,3",
     "dialog": "哈哈哈",
     "image": "",
-    "background": "",
+    "background": "classroom,0;dormitory,1",
     "audio": "bgm1",
     "command_after": "",
     "process_next": 7
   },
   {
     "process_ID": 7,
-    "command_before": "interaction,viewchange;uifade;hideui",
+    "command_before": "interaction,viewchange",
     "dialog": "",
     "image": "",
     "background": "",
@@ -91,7 +91,7 @@
   },
   {
     "process_ID": 9,
-    "command_before": "Effect,Blink",
+    "command_before": "w",
     "dialog": "",
     "image": "",
     "background": "",

@@ -258,13 +258,13 @@ public class ProcessController : MonoBehaviour
         spriteRenderer.color = to;
         imagefadefinished = true;
     }//改变sprite颜色
-    private IEnumerator FadeInSprite(SpriteRenderer spriteRenderer, float duration)
+    public IEnumerator FadeInSprite(SpriteRenderer spriteRenderer, float duration)
     {
         Color from = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0f);
         Color to = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
         yield return StartCoroutine(ChangeSpriteColor(spriteRenderer, from, to, duration));
     }//Sprite淡入
-    private IEnumerator FadeOutSprite(SpriteRenderer spriteRenderer, float duration)
+    public IEnumerator FadeOutSprite(SpriteRenderer spriteRenderer, float duration)
     {
         Color from = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
         Color to = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 0f);
@@ -337,13 +337,13 @@ public class ProcessController : MonoBehaviour
         image.color = to;
         backgroundfadefinished = true;
     }//改变Image颜色   
-    private IEnumerator FadeInImage(Image image, float duration)
+    public IEnumerator FadeInImage(Image image, float duration)
     {
         Color from = new Color(image.color.r, image.color.g, image.color.b, 0f);
         Color to = new Color(image.color.r, image.color.g, image.color.b, 1f);
         yield return StartCoroutine(ChangeImageColor(image, from, to, duration));
     }//图像淡入
-    private IEnumerator FadeOutImage(Image image, float duration)
+    public IEnumerator FadeOutImage(Image image, float duration)
     {
         Color from = new Color(image.color.r, image.color.g, image.color.b, 1f);
         Color to = new Color(image.color.r, image.color.g, image.color.b, 0f);
@@ -800,11 +800,17 @@ public class ProcessController : MonoBehaviour
         Dic_Name_Image["relative3"] = sprite_roles[9];
         Dic_Name_Image["teacher_mouth_close"] = sprite_roles[10];
         Dic_Name_Image["teacher_mouth_open"] = sprite_roles[11];
+        Dic_Name_Image["blackboard"] = sprite_roles[12];
+        Dic_Name_Image["drawbook"] = sprite_roles[13];
+        Dic_Name_Image["phone"] = sprite_roles[11];
         #endregion
         #region 初始化背景字典
         Dic_Name_Background["classroom"] = sprite_backgrounds[0];
         Dic_Name_Background["desk"] = sprite_backgrounds[1];
         Dic_Name_Background["dormitory"] = sprite_backgrounds[2];
+        Dic_Name_Background["bookshelf"] = sprite_backgrounds[3];
+        Dic_Name_Background["livingroom"] = sprite_backgrounds[4];
+        Dic_Name_Background["office"] = sprite_backgrounds[5];
         #endregion
         #region 初始化音频字典
         Dic_Name_Audio["click1"]= audiosources[0];

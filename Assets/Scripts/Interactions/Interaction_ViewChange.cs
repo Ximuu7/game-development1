@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Interaction_Classroom : Interaction
+public class Interaction_ViewChange : Interaction
 {
     public Button arrow_up;
     public Button arrow_down;
@@ -19,16 +19,20 @@ public class Interaction_Classroom : Interaction
     public float fontsize=12f;
     public Effect_SpriteOutline Outline;
 
+    public bool clicked=false;
+    private bool firstdown=true;
+
 
     public override IEnumerator Interactions()
     {
         pc.allowuichange = false;
         pc.backgroundfade = true;
+        pc.uifade = true;
         pc.textfade = true;
         pc.imagefadetime = 0.5f;
+        StartCoroutine(pc.HideUI());
         ChangeBackGrounds();
         ShowArrows();
-        StartCoroutine(ShowBook());
         StartCoroutine(ShowInstruction_ChangeView());
         StartCoroutine(ShowInstruction_OpenBook());
         instruction1 = pc.gameobjects.Find(obj => obj.name == "instruction1");
@@ -38,28 +42,29 @@ public class Interaction_Classroom : Interaction
         tmp1.fontSize=fontsize;
         tmp2.fontSize=fontsize;
         instruction2.SetActive(false);
-        yield return new WaitForSeconds(5);
+        yield return new WaitUntil(() => clicked);
         pc.ShowUI();
         pc.allowuichange = true;
         Destroy(up.gameObject);
         Destroy(down.gameObject);
         Destroy(instruction1);
         Destroy(instruction2);
+        Destroy(book);
+        yield return StartCoroutine(pc.ShowUI());
     }
 
     private void ChangeBackGrounds()
     {
-        pc.backgrounds[0].sprite = desk;
         StartCoroutine(pc.ClearBackground(1)) ;
     }
     private void ShowArrows()
     {
         up=Instantiate(arrow_up,pc.canvas_main.transform);
-        up.transform.localPosition =new Vector3(0,100,0);
-        up.onClick.AddListener(ButtonUp);
+        up.transform.localPosition =new Vector3(0,500,0);
+        up.gameObject.SetActive(false);
         down=Instantiate(arrow_down,pc.canvas_main.transform);
-        down.gameObject.SetActive(false);
-        down.transform.localPosition = new Vector3(0, -100, 0);
+        down.onClick.AddListener(ButtonDown);
+        down.transform.localPosition = new Vector3(0, -500, 0);
         
     }
     
@@ -67,6 +72,8 @@ public class Interaction_Classroom : Interaction
     {
         instruction2.SetActive(false);
         up.gameObject.SetActive(false);
+        pc.FadeInSprite(book.GetComponent<SpriteRenderer>(), pc.imagefadetime);
+        book.gameObject.SetActive(false);
         yield return StartCoroutine(pc.ClearBackground(0));
         yield return StartCoroutine(pc.ShowBackground("classroom,0"));
         down.gameObject.SetActive(true);
@@ -78,6 +85,12 @@ public class Interaction_Classroom : Interaction
         down.gameObject.SetActive(false);
         yield return StartCoroutine(pc.ClearBackground(0));
         yield return StartCoroutine(pc.ShowBackground("desk,0"));
+        if (firstdown)
+        {
+            yield return StartCoroutine(ShowBook());
+            firstdown = false;
+        }
+        book.gameObject.SetActive(true);
         up.gameObject.SetActive(true);
         instruction2.SetActive(true);
     }
@@ -109,14 +122,12 @@ public class Interaction_Classroom : Interaction
 
     private IEnumerator ShowBook()
     {
-        yield return StartCoroutine(pc.ShowSprite("father", 1f, 1f, 1f));
-        book = pc.gameobjects.Find(obj => obj.name == "father");
+        yield return StartCoroutine(pc.ShowSprite("drawbook", 1f, 1f, 0.5f));
+        book = pc.gameobjects.Find(obj => obj.name == "drawbook");
         PolygonCollider2D collider = book.AddComponent<PolygonCollider2D>();
         collider.isTrigger = true;
-        book.AddComponent<SpriteOutline>(); // 添加描边
-        book.AddComponent<ColliderEvents>();
-        Outline.receiver = book.GetComponent<SpriteOutline>();
-
+        Outline.receiver = book.AddComponent<SpriteOutline>();
+        book.AddComponent<ColliderEvents_ViewChange>();
         yield return null;
     }
 
