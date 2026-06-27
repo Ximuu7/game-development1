@@ -827,8 +827,12 @@ public class ProcessController : MonoBehaviour
         Dic_Name_Background["white"] = sprite_roles[12];
         #endregion
         #region 初始化音频字典
-        Dic_Name_Audio["click1"]= audiosources[0];
+        Dic_Name_Audio["click"]= audiosources[0];
         Dic_Name_Audio["bgm1"] = audiosources[1];
+        Dic_Name_Audio["cough"] = audiosources[2];
+        Dic_Name_Audio["knock"] = audiosources[3];
+        Dic_Name_Audio["reading1"] = audiosources[4];
+        Dic_Name_Audio["writing1"] = audiosources[5];
         #endregion
         #region 初始化交互
         Dic_Name_Interaction["LimitedTimeToChoose"] = interactions[0];
