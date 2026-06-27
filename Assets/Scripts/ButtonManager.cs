@@ -37,7 +37,7 @@ public class ButtonManager : MonoBehaviour
             Screen.SetResolution(1920, 1080, false);
         }
     }//窗口化
-    void SetVolume(float value)//主音量
+    public void SetVolume(float value)//主音量
     {
         AudioListener.volume = value;
     }

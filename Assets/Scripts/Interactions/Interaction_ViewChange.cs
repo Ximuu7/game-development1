@@ -28,6 +28,7 @@ public class Interaction_ViewChange : Interaction
     public GameObject game;
     private RhythmGame r;
     public AudioSource rhythmMusic;
+    public AudioClip click;
     public float waittime = 2f;
     public float fadetime=3f;
 
@@ -73,6 +74,7 @@ public class Interaction_ViewChange : Interaction
         yield return new WaitForSeconds(1);
         yield return StartCoroutine(FadeOutAudio(fadetime));//音乐淡出
         ClearButton.onClick.RemoveListener(painting.ClearCanvas);
+        ClearButton.onClick.RemoveListener(Click);
         Destroy(ClearButton.gameObject);
         game.SetActive(false);
         Destroy(interaction2);
@@ -130,12 +132,14 @@ public class Interaction_ViewChange : Interaction
 
     public void ButtonUp()
     {
+        Click();
         down.onClick.AddListener(ButtonDown);
         up.onClick.RemoveListener(ButtonUp);
         StartCoroutine(ViewUp());
     }
     public void ButtonDown()
     {
+        Click();
         up.onClick.AddListener(ButtonUp);
         down.onClick.RemoveListener(ButtonDown);
         StartCoroutine(ViewDown());
@@ -170,6 +174,7 @@ public class Interaction_ViewChange : Interaction
         painting=temp.gameObject.AddComponent<Painting>();
         ClearButton=Instantiate(Clear, canvas_main.transform);
         ClearButton.onClick.AddListener(painting.ClearCanvas);//
+        ClearButton.onClick.AddListener(Click);
         yield return null;
     }
 
@@ -188,7 +193,10 @@ public class Interaction_ViewChange : Interaction
         source.Stop();
     }
 
-
+    private void Click()
+    {
+        AudioSource.PlayClipAtPoint(click, Vector3.zero, 1f);
+    }
 
     #endregion
 }
