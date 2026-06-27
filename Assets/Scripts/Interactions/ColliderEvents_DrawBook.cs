@@ -14,6 +14,8 @@ public class ColliderEvents_DrawBook : MonoBehaviour
         outlineController = GetComponent<SpriteOutline>();
         GameObject obj = GameObject.Find("Interaction_DrawBook");
         book = obj.GetComponent<Interaction_DrawBook>();
+        GameObject obj2= GameObject.Find("ProcessController");
+        processController = obj2.GetComponent<ProcessController>();
         if (outlineController == null)
             Debug.LogWarning("ColliderEvents: 未找到 SpriteOutline 组件");
     }

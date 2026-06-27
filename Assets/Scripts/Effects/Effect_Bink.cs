@@ -12,7 +12,7 @@ public class BlinkController : Effect
     public override IEnumerator Effects()
     {
         if (blinkReceiver != null)
-            yield return StartCoroutine(FadeOpenEyes(blinkReceiver.openEyesValue, 1f));
+            yield return StartCoroutine(FadeOpenEyes(0f, 1f));
     }
 
     private IEnumerator FadeOpenEyes(float start, float end)

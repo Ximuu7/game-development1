@@ -18,6 +18,12 @@ public class Interaction_ViewChange : Interaction
     private GameObject book;
     public float fontsize=12f;
     public Effect_SpriteOutline Outline;
+    public Texture2D pencil;
+    public GameObject interaction2;
+    public GameObject roles_position;
+    public Button Clear;
+    private Painting painting;
+    public Canvas canvas_main;
 
     public bool clicked=false;
     private bool firstdown=true;
@@ -43,6 +49,14 @@ public class Interaction_ViewChange : Interaction
         tmp2.fontSize=fontsize;
         instruction2.SetActive(false);
         yield return new WaitUntil(() => clicked);
+        Cursor.SetCursor(pencil, new Vector2(8f, 124f), CursorMode.Auto);
+        StartCoroutine(ShowInteraction2());
+
+
+
+
+
+
         pc.ShowUI();
         pc.allowuichange = true;
         Destroy(up.gameObject);
@@ -50,9 +64,12 @@ public class Interaction_ViewChange : Interaction
         Destroy(instruction1);
         Destroy(instruction2);
         Destroy(book);
+        yield return new WaitForSeconds(5);
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         yield return StartCoroutine(pc.ShowUI());
     }
 
+    #region ViewChange
     private void ChangeBackGrounds()
     {
         StartCoroutine(pc.ClearBackground(1)) ;
@@ -60,12 +77,14 @@ public class Interaction_ViewChange : Interaction
     private void ShowArrows()
     {
         up=Instantiate(arrow_up,pc.canvas_main.transform);
+        up.GetComponent<Image>().alphaHitTestMinimumThreshold = 0.1f;
         up.transform.localPosition =new Vector3(0,500,0);
         up.gameObject.SetActive(false);
         down=Instantiate(arrow_down,pc.canvas_main.transform);
         down.onClick.AddListener(ButtonDown);
         down.transform.localPosition = new Vector3(0, -500, 0);
-        
+        down.GetComponent<Image>().alphaHitTestMinimumThreshold = 0.1f;
+
     }
     
     private IEnumerator ViewUp()
@@ -107,28 +126,42 @@ public class Interaction_ViewChange : Interaction
         down.onClick.RemoveListener(ButtonDown);
         StartCoroutine(ViewDown());
     }
-
     private IEnumerator ShowInstruction_ChangeView()
     {
         StartCoroutine(pc.ShowText("instruction1", "点击按键切换视角",5.77f,-3.74f));
         yield return null;
     }
-
     private IEnumerator ShowInstruction_OpenBook()
     {
         StartCoroutine(pc.ShowText("instruction2", "点击课本开始早读", 5.77f, -3.74f));
         yield return null;
     }
-
     private IEnumerator ShowBook()
     {
-        yield return StartCoroutine(pc.ShowSprite("drawbook", 1f, 1f, 0.5f));
-        book = pc.gameobjects.Find(obj => obj.name == "drawbook");
+        yield return StartCoroutine(pc.ShowSprite("textbook", 1f, 1f, 0.5f));
+        book = pc.gameobjects.Find(obj => obj.name == "textbook");
         PolygonCollider2D collider = book.AddComponent<PolygonCollider2D>();
         collider.isTrigger = true;
         Outline.receiver = book.AddComponent<SpriteOutline>();
         book.AddComponent<ColliderEvents_ViewChange>();
         yield return null;
     }
+    #endregion
+    #region play
 
+    private IEnumerator ShowInteraction2()
+    {
+        interaction2 = Instantiate(interaction2, roles_position.transform);
+        Transform temp = interaction2.transform.Find("drawbook");
+        painting=temp.gameObject.AddComponent<Painting>();
+        Clear=Instantiate(Clear, canvas_main.transform);
+        Clear.onClick.AddListener(painting.ClearCanvas);
+        yield return null;
+    }
+
+
+
+
+
+    #endregion
 }

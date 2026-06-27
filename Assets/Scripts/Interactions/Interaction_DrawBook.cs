@@ -15,15 +15,16 @@ public class Interaction_DrawBook : Interaction
         pc.allowuichange = false;
         yield return StartCoroutine(ShowBook());
         yield return new WaitUntil(()=>clicked);
-        pc.Processor();
+        Destroy(book);
+        pc.Processor(); 
         pc.allowuichange = true;
        
     }
 
     private IEnumerator ShowBook()
     {
-        yield return StartCoroutine(pc.ShowSprite("father", 1f, 1f, 1f));
-        book=pc.gameobjects.Find(obj => obj.name == "father");
+        yield return StartCoroutine(pc.ShowSprite("drawbook", 1f, 1f, 1f));
+        book=pc.gameobjects.Find(obj => obj.name == "drawbook");
         PolygonCollider2D collider = book.AddComponent<PolygonCollider2D>();
         collider.isTrigger = true;
         book.AddComponent<SpriteOutline>(); // 添加描边

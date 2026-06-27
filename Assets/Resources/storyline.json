@@ -41,7 +41,7 @@
   },
   {
     "process_ID": 4,
-    "command_before": "imagefade;audiofade",
+    "command_before": "imagefade;audiofade;hideui;effect,Blink",
     "dialog": "orz",
     "image": "",
     "background": "",
@@ -53,7 +53,7 @@
     "process_ID": 5,
     "command_before": "effect,ScreenShake;imagefadetime,3",
     "dialog": "唉唉唉",
-    "image": "father,0,0.7;",
+    "image": "father_sad,0,0.7;",
     "background": "",
     "audio": "",
     "command_after": "clearimage,classmates;effect,ScreenShake",
@@ -91,7 +91,7 @@
   },
   {
     "process_ID": 9,
-    "command_before": "w",
+    "command_before": "",
     "dialog": "",
     "image": "",
     "background": "",

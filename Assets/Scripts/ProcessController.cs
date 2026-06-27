@@ -59,7 +59,6 @@ public class ProcessController : MonoBehaviour
     public Dictionary<string,Sprite> Dic_Name_Image = new Dictionary<string,Sprite>();
     public Dictionary<string,Sprite> Dic_Name_Background = new Dictionary<string,Sprite>();
     public Dictionary<string,AudioSource> Dic_Name_Audio = new Dictionary<string, AudioSource>();
-    public Dictionary<string,AnimationClip> Dic_Name_Animation = new Dictionary<string, AnimationClip>();
     public Dictionary<string,Interaction> Dic_Name_Interaction = new Dictionary<string,Interaction>();
     public Dictionary<string,Effect> Dic_Name_Effect = new Dictionary<string, Effect>();
     #endregion
@@ -72,7 +71,6 @@ public class ProcessController : MonoBehaviour
     public List<Sprite> sprite_backgrounds;//背景图像
     public List<SpriteRenderer> spriterenderers = new List<SpriteRenderer>();  // 用于显示图像的SpriteRenderer组件
     public List<AudioSource> audiosources = new List<AudioSource>();// 音频
-    public List<AnimationClip> animationclips = new List<AnimationClip>();// 动画
     public List<Interaction> interactions = new List<Interaction>();// 交互
     public List<Effect> effects = new List<Effect>();// 效果
 
@@ -791,10 +789,10 @@ public class ProcessController : MonoBehaviour
         Dic_Name_Image["classmate1"]= sprite_roles[0];
         Dic_Name_Image["classmate2"] = sprite_roles[1];
         Dic_Name_Image["classmates"] = sprite_roles[2];
-        Dic_Name_Image["father"] = sprite_roles[3];
+        Dic_Name_Image["father_smile"] = sprite_roles[3];
         Dic_Name_Image["friend"] = sprite_roles[4];
         Dic_Name_Image["houseparent"] = sprite_roles[5];
-        Dic_Name_Image["mother"] = sprite_roles[6];
+        Dic_Name_Image["mother_smile"] = sprite_roles[6];
         Dic_Name_Image["relative1"] = sprite_roles[7];
         Dic_Name_Image["relative2"] = sprite_roles[8];
         Dic_Name_Image["relative3"] = sprite_roles[9];
@@ -802,7 +800,11 @@ public class ProcessController : MonoBehaviour
         Dic_Name_Image["teacher_mouth_open"] = sprite_roles[11];
         Dic_Name_Image["blackboard"] = sprite_roles[12];
         Dic_Name_Image["drawbook"] = sprite_roles[13];
-        Dic_Name_Image["phone"] = sprite_roles[11];
+        Dic_Name_Image["phone"] = sprite_roles[14];
+        Dic_Name_Image["textbook"] = sprite_roles[15];
+        Dic_Name_Image["father_sad"] = sprite_roles[16];
+        Dic_Name_Image["mother_sad"] = sprite_roles[17];
+        Dic_Name_Image["blackboard"] = sprite_roles[18];
         #endregion
         #region 初始化背景字典
         Dic_Name_Background["classroom"] = sprite_backgrounds[0];
@@ -811,6 +813,13 @@ public class ProcessController : MonoBehaviour
         Dic_Name_Background["bookshelf"] = sprite_backgrounds[3];
         Dic_Name_Background["livingroom"] = sprite_backgrounds[4];
         Dic_Name_Background["office"] = sprite_backgrounds[5];
+        Dic_Name_Background["classroom_morning"] = sprite_roles[6];
+        Dic_Name_Background["classroom_noon"] = sprite_roles[7];
+        Dic_Name_Background["classroom_afternoon"] = sprite_roles[8];
+        Dic_Name_Background["classroom_eveninng"] = sprite_roles[9];
+        Dic_Name_Background["dormitory_phone"] = sprite_roles[10];
+        Dic_Name_Background["black"] = sprite_roles[11];
+        Dic_Name_Background["white"] = sprite_roles[12];
         #endregion
         #region 初始化音频字典
         Dic_Name_Audio["click1"]= audiosources[0];
