@@ -22,8 +22,14 @@ public class Interaction_ViewChange : Interaction
     public GameObject interaction2;
     public GameObject roles_position;
     public Button Clear;
+    private Button ClearButton;
     private Painting painting;
     public Canvas canvas_main;
+    public GameObject game;
+    private RhythmGame r;
+    public AudioSource rhythmMusic;
+    public float waittime = 2f;
+    public float fadetime=3f;
 
     public bool clicked=false;
     private bool firstdown=true;
@@ -31,6 +37,7 @@ public class Interaction_ViewChange : Interaction
 
     public override IEnumerator Interactions()
     {
+        game.SetActive(true);
         pc.allowuichange = false;
         pc.backgroundfade = true;
         pc.uifade = true;
@@ -48,25 +55,32 @@ public class Interaction_ViewChange : Interaction
         tmp1.fontSize=fontsize;
         tmp2.fontSize=fontsize;
         instruction2.SetActive(false);
-        yield return new WaitUntil(() => clicked);
-        Cursor.SetCursor(pencil, new Vector2(8f, 124f), CursorMode.Auto);
-        StartCoroutine(ShowInteraction2());
-
-
-
-
-
-
-        pc.ShowUI();
-        pc.allowuichange = true;
+        yield return new WaitUntil(() => clicked);//第一部分结束
         Destroy(up.gameObject);
         Destroy(down.gameObject);
         Destroy(instruction1);
         Destroy(instruction2);
         Destroy(book);
-        yield return new WaitForSeconds(5);
+        Cursor.SetCursor(pencil, new Vector2(8f, 124f), CursorMode.Auto);
+        yield return StartCoroutine(ShowInteraction2());//第二部分开始
+        r =game.GetComponent<RhythmGame>();
+        r.StartGame();
+        yield return null;
+        StartCoroutine(r.Generator());//生成音符
+        yield return new WaitForSeconds(waittime);
+        rhythmMusic.Play();//播放音乐
+        yield return new WaitUntil(()=>r.count<=0);
+        yield return new WaitForSeconds(1);
+        yield return StartCoroutine(FadeOutAudio(fadetime));//音乐淡出
+        ClearButton.onClick.RemoveListener(painting.ClearCanvas);
+        Destroy(ClearButton.gameObject);
+        game.SetActive(false);
+        Destroy(interaction2);
+        pc.allowuichange = true;
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
         yield return StartCoroutine(pc.ShowUI());
+        pc.Processor();
+        yield return null;
     }
 
     #region ViewChange
@@ -154,12 +168,25 @@ public class Interaction_ViewChange : Interaction
         interaction2 = Instantiate(interaction2, roles_position.transform);
         Transform temp = interaction2.transform.Find("drawbook");
         painting=temp.gameObject.AddComponent<Painting>();
-        Clear=Instantiate(Clear, canvas_main.transform);
-        Clear.onClick.AddListener(painting.ClearCanvas);
+        ClearButton=Instantiate(Clear, canvas_main.transform);
+        ClearButton.onClick.AddListener(painting.ClearCanvas);//
         yield return null;
     }
 
-
+    public IEnumerator FadeOutAudio(float duration)
+    {
+        AudioSource source = rhythmMusic;
+        float startVolume = source.volume;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            source.volume = Mathf.Lerp(startVolume, 0f, elapsed / duration);
+            yield return null;
+        }
+        source.volume = 0f;
+        source.Stop();
+    }
 
 
 

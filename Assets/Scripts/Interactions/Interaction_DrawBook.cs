@@ -18,6 +18,7 @@ public class Interaction_DrawBook : Interaction
         Destroy(book);
         pc.Processor(); 
         pc.allowuichange = true;
+        yield return null;
        
     }
 

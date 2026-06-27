@@ -521,6 +521,7 @@ public class ProcessController : MonoBehaviour
         {
             StartCoroutine(FadeInImage(a.GetComponent<Image>(), imagefadetime));
             StartCoroutine(FadeInImage(b.GetComponent<Image>(), imagefadetime));
+            StartCoroutine(FadeInText(b.gameObject.GetComponentInChildren<TextMeshProUGUI>(), imagefadetime));
             StartCoroutine(FadeInImage(c.GetComponent<Image>(), imagefadetime));
         }
         else
@@ -614,6 +615,10 @@ public class ProcessController : MonoBehaviour
                     {
                         StartCoroutine(ClearSprite(singlecommand[1]));
                     }
+                }
+                if(singlecommand[0] == "cleartext")
+                {
+                    dialogtext.text = "";
                 }
                 if (singlecommand[0] == "stopaudio")
                 {

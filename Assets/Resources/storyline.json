@@ -1,11 +1,11 @@
 [
   {
     "process_ID": 0,
-    "command_before": "imagefade;audiofade,",
+    "command_before": "imagefade;audiofade",
     "dialog": "",
-    "image": "classmate1,1,1;classmate2,2,0.5",
-    "background": "classroom,0;dormitory,1",
-    "audio": "bgm1",
+    "image": "",
+    "background": "",
+    "audio": "",
     "command_after": "",
     "process_next": 1
   },
@@ -16,7 +16,7 @@
     "image": "classmates,1.3,3.1,0.9",
     "background": "dormitory,0",
     "audio": "",
-    "command_after": "LimitTimeToChoose",
+    "command_after": "",
     "process_next": 3
   },
   {
@@ -35,7 +35,7 @@
     "dialog": "qaq",
     "image": "",
     "background": "",
-    "audio": "bgm1",
+    "audio": "",
     "command_after": "clearimage,1",
     "process_next": 4
   },
@@ -51,7 +51,7 @@
   },
   {
     "process_ID": 5,
-    "command_before": "effect,ScreenShake;imagefadetime,3",
+    "command_before": "effect,ScreenShake;imagefadetime,2",
     "dialog": "唉唉唉",
     "image": "father_sad,0,0.7;",
     "background": "",
@@ -65,8 +65,8 @@
     "dialog": "哈哈哈",
     "image": "",
     "background": "classroom,0;dormitory,1",
-    "audio": "bgm1",
-    "command_after": "",
+    "audio": "",
+    "command_after": "clearimage,0",
     "process_next": 7
   },
   {
@@ -81,8 +81,8 @@
   },
   {
     "process_ID": 8,
-    "command_before": "interaction,DrawBook",
-    "dialog": "",
+    "command_before": "",
+    "dialog": "aaa",
     "image": "",
     "background": "",
     "audio": "",
@@ -92,7 +92,7 @@
   {
     "process_ID": 9,
     "command_before": "",
-    "dialog": "",
+    "dialog": "d",
     "image": "",
     "background": "",
     "audio": "",
@@ -102,7 +102,7 @@
   {
     "process_ID": 10,
     "command_before": "",
-    "dialog": "",
+    "dialog": "ddfasfa",
     "image": "",
     "background": "",
     "audio": "",

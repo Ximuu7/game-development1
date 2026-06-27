@@ -12,7 +12,7 @@ public class ButtonManager : MonoBehaviour
 
     public List<ToggleGroup> togglegroups_settings;
 
-    public List<Slider> sliders_settings;
+    public Slider volumeSlider;
     public GameObject canvas_settings;
     public GameObject canvas_main;
     public GameObject canvas_start;
@@ -35,10 +35,10 @@ public class ButtonManager : MonoBehaviour
             Screen.SetResolution(1920, 1080, false);
         }
     }//窗口化
-    public void VolumeController_Background(float value)
+    void SetVolume(float value)//主音量
     {
-
-    }// 背景音控制
+        AudioListener.volume = value;
+    }
     public void VolumeController_Effect()
     {
     }// 音效控制
@@ -130,6 +130,10 @@ public class ButtonManager : MonoBehaviour
         CloseGame();
         CloseSettings();
         button_position_backtostart = buttons_settings[1].transform.localPosition;
+        volumeSlider.minValue = 0f;
+        volumeSlider.maxValue = 1f;
+        volumeSlider.value = AudioListener.volume; // 初始同步
+        volumeSlider.onValueChanged.AddListener(SetVolume);
     }
 
 }
