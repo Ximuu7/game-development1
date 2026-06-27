@@ -18,8 +18,10 @@ public class ButtonManager : MonoBehaviour
     public GameObject canvas_start;
     public GameObject canvas_background;
     public GameObject roles;
+    public AudioClip click;
     Vector3 button_position_backtostart;
     public bool isgaming = false;
+
 
     public void Display_FullScreen(bool isOn)
     {
@@ -117,6 +119,11 @@ public class ButtonManager : MonoBehaviour
     public void Continue()
     {
 
+    }
+
+    public void ClickSound()
+    {
+        AudioSource.PlayClipAtPoint(click, Vector3.zero, 1f);
     }
 
     private void Update()

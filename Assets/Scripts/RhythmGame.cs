@@ -32,6 +32,7 @@ public class RhythmGame : MonoBehaviour
     public bool finished = false;
     public int count;
     public float effectScale = 0.12f;
+    public AudioClip click;
 
     public void StartGame()
     {
@@ -100,6 +101,7 @@ public class RhythmGame : MonoBehaviour
         Transform nearest = GetClosestChildByY(index, out dist);
         if (nearest != null && dist <= clickarea)
         {
+            AudioSource.PlayClipAtPoint(click, Vector3.zero , 1f);
             Vector3 position = nearest.position;
             StartCoroutine(SpawnAndFadeCoroutine(position));
             Destroy(nearest.gameObject);

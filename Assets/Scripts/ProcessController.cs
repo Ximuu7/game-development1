@@ -384,6 +384,7 @@ public class ProcessController : MonoBehaviour
                 StartCoroutine(FadeInAudio(audio_name, audiofadetime));
             }
         }
+        Debug.Log("asssaa");
         yield return null;
     }//播放音频
     public IEnumerator StopPlayAudio(string audio_name)
@@ -758,7 +759,8 @@ public class ProcessController : MonoBehaviour
     {
         processID = index;
         Processor(processID);
-        PlayAudio("click1");
+        StartCoroutine(PlayAudio("click"));
+        Debug.Log("aaa");
         for (int i = 0; i < optiongroup.childCount; i++)
         {
             Destroy(optiongroup.GetChild(i).gameObject);

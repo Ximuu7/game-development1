@@ -1,7 +1,7 @@
 [
   {
     "process_ID": 0,
-    "command_before": "imagefade;audiofade",
+    "command_before": "imagefade",
     "dialog": "",
     "image": "",
     "background": "",
