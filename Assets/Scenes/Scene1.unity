@@ -2099,6 +2099,7 @@ MonoBehaviour:
   canvas_main: {fileID: 541244715}
   game: {fileID: 1921678514}
   rhythmMusic: {fileID: 1907288127}
+  click: {fileID: 8300000, guid: 5fba3c7570ed67d4e870a5376f758035, type: 3}
   waittime: 2
   fadetime: 3
   clicked: 0
@@ -6676,8 +6677,8 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 886794491}
         m_TargetAssemblyTypeName: ButtonManager, Assembly-CSharp
-        m_MethodName: ClickSound
-        m_Mode: 1
+        m_MethodName: SetVolume
+        m_Mode: 4
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
