@@ -21,20 +21,21 @@ public class ButtonManager : MonoBehaviour
     public AudioClip click;
     Vector3 button_position_backtostart;
     public bool isgaming = false;
+    Resolution currentResolution;
 
 
     public void Display_FullScreen(bool isOn)
     {
         if (isOn)
         {
-            Screen.SetResolution(1920, 1080, true);
+            Screen.SetResolution(currentResolution.width, currentResolution.height, true);
         }
     }//全屏
     public void Display_Windowed(bool isOn)
     {
         if (isOn)
         {
-            Screen.SetResolution(1920, 1080, false);
+            Screen.SetResolution(currentResolution.width, currentResolution.height, false);
         }
     }//窗口化
     public void SetVolume(float value)//主音量
@@ -50,7 +51,7 @@ public class ButtonManager : MonoBehaviour
         
     }//显示倒计时条
 
-    private void OpenStart()
+    public void OpenStart()
     {
         canvas_start.SetActive(true);
     }//打开主界面
@@ -65,7 +66,7 @@ public class ButtonManager : MonoBehaviour
         canvas_main.SetActive(true);
         isgaming = true;
     }//打开游戏界面
-    private void CloseGame()
+    public void CloseGame()
     {
         canvas_background.SetActive(false);
         canvas_main.SetActive(false);
@@ -76,7 +77,7 @@ public class ButtonManager : MonoBehaviour
     {
         canvas_settings.SetActive(true);
     }//打开设置界面
-    private void CloseSettings()
+    public void CloseSettings()
     {
         canvas_settings.SetActive(false);
     }//关闭设置界面
@@ -141,6 +142,12 @@ public class ButtonManager : MonoBehaviour
         volumeSlider.maxValue = 1f;
         volumeSlider.value = AudioListener.volume; // 初始同步
         volumeSlider.onValueChanged.AddListener(SetVolume);
+        // 获取当前屏幕的推荐分辨率
+        currentResolution = Screen.currentResolution;
+        // 设置为当前设备的分辨率，使用全屏窗口模式
+        Screen.SetResolution(currentResolution.width, currentResolution.height, FullScreenMode.FullScreenWindow);
     }
 
 }
+
+

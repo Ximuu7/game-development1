@@ -850,6 +850,7 @@ public class ProcessController : MonoBehaviour
         Dic_Name_Interaction["LimitedTimeToChoose"] = interactions[0];
         Dic_Name_Interaction["viewchange"] = interactions[1];
         Dic_Name_Interaction["DrawBook"]=interactions[2];
+        Dic_Name_Interaction["End"] = interactions[3];
         #endregion
         #region 初始化效果
         Dic_Name_Effect["ScreenShake"] = effects[0];
