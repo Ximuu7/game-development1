@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using TMPro;
+using Unity.IO.LowLevel.Unsafe;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -74,7 +75,10 @@ public class ProcessController : MonoBehaviour
     public List<Interaction> interactions = new List<Interaction>();// 交互
     public List<Effect> effects = new List<Effect>();// 效果
 
-
+    public void ChangeProcess(int target,int process_next)//改变世界线
+    {
+        dialogrows[target].process_next = process_next;
+    }
 
     private void ReadDialog(string str)
     {
@@ -455,6 +459,7 @@ public class ProcessController : MonoBehaviour
             (delegate
             {
                 OnOptionClick(dialogrows[process_ID].process_next);
+                CommandReader(dialogrows[process_ID].command_after);
             });
             isoption = false;
             ShowOptions(process_ID + 1);
@@ -658,6 +663,12 @@ public class ProcessController : MonoBehaviour
                 {
                     Processor(processID);
                 }
+                if( singlecommand[0] == "changeprocess")
+                {
+                    int target=int.Parse(singlecommand[1]);
+                    int process_next=int.Parse(singlecommand[2]);
+                    ChangeProcess(target, process_next);
+                }
                 
             }
         }
@@ -760,7 +771,6 @@ public class ProcessController : MonoBehaviour
         processID = index;
         Processor(processID);
         StartCoroutine(PlayAudio("click"));
-        Debug.Log("aaa");
         for (int i = 0; i < optiongroup.childCount; i++)
         {
             Destroy(optiongroup.GetChild(i).gameObject);
